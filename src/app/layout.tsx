@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Cairo } from "next/font/google";
 import "./globals.css";
-import SmoothScroll from "@/components/SmoothScroll";
 
 const godber = localFont({
   src: "../assets/fonts/godber/Godber.ttf",
@@ -44,7 +43,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
-      <SmoothScroll />
       {children}
       </body>
     </html>

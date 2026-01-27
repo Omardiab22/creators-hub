@@ -6,7 +6,9 @@ import {
   useScroll,
   useSpring,
   useTransform,
+  useMotionValue,
   type MotionValue,
+  AnimatePresence,
 } from "framer-motion";
 import Image from "next/image";
 
@@ -24,8 +26,8 @@ export default function Page() {
           <Image
             src="/howwehelp/notebook.svg"
             alt=""
-            width={260}
-            height={170}
+            width={220}
+            height={150}
             priority
           />
         }
@@ -46,39 +48,27 @@ function WayWeWork() {
     offset: ["start end", "end start"],
   });
 
+  const dragBoundsRef = useRef<HTMLDivElement | null>(null);
+
   return (
-    <section
-      ref={sectionRef}
-      id="our-work"
-      className="w-full bg-white overflow-x-hidden"
-    >
+    <section ref={sectionRef} id="our-work" className="w-full bg-white overflow-x-hidden">
       <div className="mx-auto w-full max-w-[1240px] px-4 sm:px-6">
         <div className="relative w-full overflow-visible">
-          {/* ✅ ثابت */}
-          <div className="relative z-20 w-full h-[420px] sm:h-[520px] lg:h-[560px] rounded-[22px] overflow-hidden bg-[#F3FF00]">
-            {/* ✅ الصورة نفسها: Pulse أسرع + يمين/شمال + ميل خفيف */}
+          <div className="relative z-20 w-full h-[360px] sm:h-[460px] lg:h-[560px] rounded-[22px] overflow-hidden bg-[#F3FF00]">
             <motion.img
               src="/waywork/bg.svg"
               alt=""
               draggable={false}
               className="absolute inset-0 h-full w-full select-none object-cover"
-              style={{
-                transformOrigin: "50% 50%",
-                willChange: "transform",
-              }}
+              style={{ transformOrigin: "50% 50%", willChange: "transform" }}
               animate={{
-                scale: [1, 1.065, 1],     // ✅ نبضة
-                x: [0, 18, 0, -18, 0],    // ✅ يمين/شمال
-                rotate: [0, 0.6, 0, -0.6, 0], // ✅ ميل بسيط
+                scale: [1, 1.06, 1],
+                x: [0, 18, 0, -18, 0],
+                rotate: [0, 0.6, 0, -0.6, 0],
               }}
-              transition={{
-                duration: 2.6, // ✅ أسرع
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
+              transition={{ duration: 2.3, repeat: Infinity, ease: "easeInOut" }}
             />
 
-            {/* vignette خفيف للقراءة */}
             <div
               aria-hidden="true"
               className="absolute inset-0"
@@ -87,19 +77,24 @@ function WayWeWork() {
                   "radial-gradient(1200px 650px at 50% 50%, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0) 62%)",
               }}
             />
+
+            <div
+              ref={dragBoundsRef}
+              aria-hidden="true"
+              className="absolute inset-[16px] sm:inset-[22px] lg:inset-[30px] pointer-events-none"
+            />
           </div>
 
-          {/* content overlay */}
-          <div className="pointer-events-none absolute inset-0 z-30">
+          <div className="absolute inset-0 z-30">
             <h2
               className="
+                pointer-events-none
                 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
                 w-full px-6 sm:px-10
                 text-[#0D1440]
-                font-extrabold tracking-tight leading-[0.9]
-                text-center
-                select-none
-                text-[clamp(44px,7vw,132px)]
+                font-extrabold tracking-tight leading-[0.92]
+                text-center select-none
+                text-[clamp(34px,6.6vw,120px)]
                 lg:whitespace-nowrap
               "
             >
@@ -109,6 +104,7 @@ function WayWeWork() {
             <AirPill
               progress={scrollYProgress}
               strength={120}
+              dragBoundsRef={dragBoundsRef}
               label="DISCOVERY & STRATEGY"
               className="left-[34%] top-[16%] sm:left-[25%] sm:top-[20%]"
               trail="left"
@@ -118,6 +114,7 @@ function WayWeWork() {
             <AirPill
               progress={scrollYProgress}
               strength={140}
+              dragBoundsRef={dragBoundsRef}
               label="PROFESSIONALISM"
               className="left-[74%] top-[10%] sm:left-[84%] sm:top-[16%]"
               trail="right"
@@ -127,6 +124,7 @@ function WayWeWork() {
             <AirPill
               progress={scrollYProgress}
               strength={150}
+              dragBoundsRef={dragBoundsRef}
               label="CREATIVE PRODUCTION & DESIGN"
               className="left-[72%] top-[24%] sm:left-[58%] sm:top-[30%]"
               trail="right"
@@ -136,6 +134,7 @@ function WayWeWork() {
             <AirPill
               progress={scrollYProgress}
               strength={110}
+              dragBoundsRef={dragBoundsRef}
               label="TRANSPARENCY"
               className="left-1/2 top-[55%] sm:left-[46%] sm:top-[54%]"
               trail="left"
@@ -145,6 +144,7 @@ function WayWeWork() {
             <AirPill
               progress={scrollYProgress}
               strength={150}
+              dragBoundsRef={dragBoundsRef}
               label="ANALYSIS & OPTIMIZATION"
               className="left-[30%] top-[72%] sm:left-[16%] sm:top-[68%]"
               trail="left"
@@ -154,6 +154,7 @@ function WayWeWork() {
             <AirPill
               progress={scrollYProgress}
               strength={170}
+              dragBoundsRef={dragBoundsRef}
               label="EXECUTION & MANAGEMENT"
               className="left-[64%] top-[86%] sm:left-[64%] sm:top-[82%]"
               trail="right"
@@ -175,6 +176,7 @@ function AirPill({
   trailClass,
   progress,
   strength = 140,
+  dragBoundsRef,
 }: {
   label: string;
   className: string;
@@ -183,56 +185,62 @@ function AirPill({
   trailClass: string;
   progress: MotionValue<number>;
   strength?: number;
+  dragBoundsRef: React.RefObject<HTMLDivElement | null>;
 }) {
   const dir = trail === "right" ? 1 : trail === "left" ? -1 : 0;
 
-  const x = useTransform(
-    progress,
-    [0, 0.5, 1],
-    [dir * strength, 0, dir * -strength]
-  );
-
-  const xSpring = useSpring(x, { stiffness: 120, damping: 22, mass: 0.8 });
+  const baseX = useTransform(progress, [0, 0.5, 1], [dir * strength, 0, dir * -strength]);
+  const baseXSpring = useSpring(baseX, { stiffness: 120, damping: 22, mass: 0.8 });
 
   const opacity = useTransform(progress, [0.08, 0.18, 0.9], [0, 1, 1]);
   const opacitySpring = useSpring(opacity, { stiffness: 120, damping: 24 });
 
+  const dragX = useMotionValue(0);
+
   return (
     <motion.div
-      style={{ x: xSpring, opacity: opacitySpring }}
-      className={["absolute -translate-x-1/2 -translate-y-1/2", className].join(
-        " "
-      )}
+      style={{ x: baseXSpring, opacity: opacitySpring }}
+      className={["absolute -translate-x-1/2 -translate-y-1/2", className].join(" ")}
     >
-      {trail !== "none" && (
-        <span
-          aria-hidden="true"
-          className={[
-            "absolute top-1/2 -translate-y-1/2",
-            "h-[45px] sm:h-[45px]",
-            "w-[220vw]",
-            "rounded-[18px]",
-            trailClass,
-            trail === "right" ? "left-[58%]" : "right-[58%]",
-          ].join(" ")}
-        />
-      )}
-
-      <div
-        className={[
-          "relative z-10",
-          "h-[44px] sm:h-[48px]",
-          "px-10",
-          "rounded-full",
-          "flex items-center justify-center",
-          "text-[12px] sm:text-[13px]",
-          "font-semibold whitespace-nowrap",
-          "shadow-[0_14px_28px_rgba(0,0,0,0.18)]",
-          pillClass,
-        ].join(" ")}
+      <motion.div
+        drag="x"
+        dragConstraints={dragBoundsRef}
+        dragElastic={0.12}
+        dragMomentum={false}
+        whileDrag={{ scale: 1.03 }}
+        style={{ x: dragX, touchAction: "pan-y" }}
       >
-        {label}
-      </div>
+        {trail !== "none" && (
+          <span
+            aria-hidden="true"
+            className={[
+              "pointer-events-none absolute top-1/2 -translate-y-1/2",
+              "h-[42px] sm:h-[45px]",
+              "w-[220vw]",
+              "rounded-[18px]",
+              trailClass,
+              trail === "right" ? "left-[58%]" : "right-[58%]",
+            ].join(" ")}
+          />
+        )}
+
+        <div
+          className={[
+            "relative z-10",
+            "h-[40px] sm:h-[48px]",
+            "px-7 sm:px-10",
+            "rounded-full",
+            "flex items-center justify-center",
+            "text-[11px] sm:text-[13px]",
+            "font-semibold whitespace-nowrap",
+            "shadow-[0_14px_28px_rgba(0,0,0,0.18)]",
+            "cursor-grab active:cursor-grabbing",
+            pillClass,
+          ].join(" ")}
+        >
+          {label}
+        </div>
+      </motion.div>
     </motion.div>
   );
 }
@@ -269,12 +277,7 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
         label: "Content Creation",
         title: "Content Creation",
         desc: "Our content creation process is a comprehensive, end-to-end engine designed to transform raw ideas into high-performing digital assets.",
-        bullets: [
-          "Custom Design & Visuals",
-          "Social Media Management",
-          "Growth & Strategy",
-          "Analytics & Reporting",
-        ],
+        bullets: ["Custom Design & Visuals", "Social Media Management", "Growth & Strategy", "Analytics & Reporting"],
       },
       { id: "t2", number: "02", label: "Design", title: "Design", desc: "", bullets: [] },
       { id: "t3", number: "03", label: "Social Media Management", title: "Social Media Management", desc: "", bullets: [] },
@@ -286,28 +289,41 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
 
   const [activeId, setActiveId] = useState<string>(tabs[0].id);
 
-  const ordered = useMemo(() => {
-    const a = tabs.find((t) => t.id === activeId)!;
-    const rest = tabs.filter((t) => t.id !== activeId);
-    rest.sort((x, y) => x.number.localeCompare(y.number));
-    return [a, ...rest];
-  }, [tabs, activeId]);
+  // ✅ active index
+  const activeIndex = useMemo(() => tabs.findIndex((t) => t.id === activeId), [tabs, activeId]);
 
-  const active = ordered[0];
+  // ✅ grid columns: active = 1fr, others = 78px
+  const gridCols = useMemo(
+    () => tabs.map((t) => (t.id === activeId ? "minmax(0, 1fr)" : "78px")).join(" "),
+    [tabs, activeId]
+  );
+
+  const activeTab = tabs[activeIndex] ?? tabs[0];
+
+  // ✅ Smooth slower transition config (shared)
+  const smoothLayout = useMemo(
+    () => ({
+      type: "spring" as const,
+      stiffness: 220,
+      damping: 32,
+      mass: 1.15,
+    }),
+    []
+  );
 
   return (
     <section id="how-we-help" className={`relative w-full ${className}`} style={{ background: NAVY }}>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 -top-[140px] sm:-top-[170px] h-[170px] sm:h-[210px]"
+        className="pointer-events-none absolute inset-x-0 -top-[110px] sm:-top-[140px] h-[140px] sm:h-[190px]"
         style={{ backgroundColor: NAVY }}
       />
 
-      <div className="mx-auto max-w-6xl px-4 py-14 md:py-16">
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:py-14 md:py-16">
         <div className="grid gap-6 md:grid-cols-[1fr_1fr] md:items-start">
           <div className="flex items-center gap-3">
             <span className="h-2 w-2" style={{ background: NEON }} />
-            <h2 className="text-2xl md:text-3xl font-semibold tracking-tight" style={{ color: NEON }}>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight" style={{ color: NEON }}>
               HOW WE HELP
             </h2>
           </div>
@@ -318,18 +334,57 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
           </p>
         </div>
 
-        <div className="mt-10">
-          <div className="hidden md:block">
-            <motion.div layout className="grid gap-6" style={{ gridTemplateColumns: "minmax(0, 1fr) repeat(4, 78px)" }}>
-              <motion.div layout transition={{ type: "spring", stiffness: 380, damping: 34 }}>
-                <ActivePanel tab={active} bigIcon={bigIcon} />
-              </motion.div>
+        <div className="mt-8 sm:mt-10">
+          {/* Mobile */}
+          <div className="md:hidden">
+            <ActivePanel key={activeTab.id} tab={activeTab} bigIcon={bigIcon} />
 
-              {ordered.slice(1).map((t) => (
-                <motion.div key={t.id} layout transition={{ type: "spring", stiffness: 380, damping: 34 }}>
-                  <ClosedColumn tab={t} onClick={() => setActiveId(t.id)} />
-                </motion.div>
-              ))}
+            <div className="mt-5 flex gap-3 overflow-x-auto pb-2">
+              {tabs.map((t) => {
+                const isActive = t.id === activeId;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setActiveId(t.id)}
+                    className={[
+                      "shrink-0 rounded-full px-4 py-2 text-[12px] font-semibold",
+                      "border transition",
+                      isActive ? "text-[#081B17]" : "text-white/80",
+                    ].join(" ")}
+                    style={{
+                      borderColor: isActive ? NEON : NEON_22,
+                      backgroundColor: isActive ? NEON : "rgba(255,255,255,0.04)",
+                    }}
+                  >
+                    {t.number} • {t.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Desktop */}
+          <div className="hidden md:block">
+            <motion.div
+              layout
+              className="grid gap-6"
+              style={{ gridTemplateColumns: gridCols }}
+              transition={{ layout: smoothLayout }} // ✅ أبطأ + سموز
+            >
+              {tabs.map((t) => {
+                const isActive = t.id === activeId;
+
+                return (
+                  <motion.div key={t.id} layout transition={smoothLayout}>
+                    {isActive ? (
+                      <ActivePanel key={t.id} tab={t} bigIcon={bigIcon} />
+                    ) : (
+                      <ClosedColumn tab={t} onClick={() => setActiveId(t.id)} />
+                    )}
+                  </motion.div>
+                );
+              })}
             </motion.div>
           </div>
         </div>
@@ -344,8 +399,9 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
 
 function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) {
   return (
-    <div
-      className="relative h-[470px] overflow-hidden"
+    <motion.div
+      layout
+      className="relative overflow-hidden"
       style={{
         borderRadius: 14,
         border: `1px solid ${NEON_48}`,
@@ -355,86 +411,111 @@ function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) 
           "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.00) 55%, rgba(0,0,0,0.06) 100%)",
       }}
     >
-      <div className="absolute right-10 top-9">
-        <span className="text-[22px] font-semibold tracking-wide" style={{ color: NEON }}>
-          {tab.number}
-        </span>
-      </div>
+      <div className="relative h-[420px] md:h-[470px]">
+        <div className="absolute right-8 top-7 md:right-10 md:top-9">
+          <span className="text-[18px] md:text-[22px] font-semibold tracking-wide" style={{ color: NEON }}>
+            {tab.number}
+          </span>
+        </div>
 
-      <div className="h-full px-10 pt-10 pb-10">
-        <h3 className="text-[38px] leading-[1.05] font-medium" style={{ color: NEON }}>
-          {tab.title}
-        </h3>
+        <div className="h-full px-6 md:px-10 pt-8 md:pt-10 pb-10">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={tab.id}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }} // ✅ أهدى
+              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }} // ✅ smoother + slower
+            >
+              <h3 className="text-[30px] md:text-[38px] leading-[1.05] font-medium" style={{ color: NEON }}>
+                {tab.title}
+              </h3>
 
-        <p className="mt-6 max-w-[560px] text-[16px] leading-[1.55]" style={{ color: NEON_48 }}>
-          {tab.desc}
-        </p>
+              <p className="mt-4 md:mt-6 max-w-[560px] text-[13px] md:text-[16px] leading-[1.55]" style={{ color: NEON_48 }}>
+                {tab.desc}
+              </p>
 
-        <ul className="mt-24 space-y-3">
-          {tab.bullets.map((b) => (
-            <li key={b} className="flex items-center gap-3">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ color: NEON }}>
-                <path
-                  d="M9 18L15 12L9 6"
-                  stroke="currentColor"
-                  strokeWidth="2.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              {!!tab.bullets?.length && (
+                <ul className="mt-10 md:mt-20 space-y-3">
+                  {tab.bullets.map((b) => (
+                    <li key={b} className="flex items-center gap-3">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ color: NEON }}>
+                        <path
+                          d="M9 18L15 12L9 6"
+                          stroke="currentColor"
+                          strokeWidth="2.4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
 
-              <span className="text-[14px] font-medium" style={{ color: NEON }}>
-                {b}
-              </span>
-            </li>
-          ))}
-        </ul>
+                      <span className="text-[13px] md:text-[14px] font-medium" style={{ color: NEON }}>
+                        {b}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </motion.div>
+          </AnimatePresence>
 
-        <div className="pointer-events-none absolute bottom-10 right-10">
-          <div className="h-[170px] w-[260px]">{bigIcon ?? null}</div>
+          <div className="pointer-events-none absolute bottom-7 right-7 md:bottom-10 md:right-10">
+            <div className="h-[120px] w-[180px] md:h-[140px] md:w-[220px] opacity-95">
+              {bigIcon ?? null}
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 /* =========================
-   Closed Column
+   Closed Column (Centered Title)
 ========================= */
 
 function ClosedColumn({ tab, onClick }: { tab: Tab; onClick: () => void }) {
   return (
-    <button
+    <motion.button
+      layout
       type="button"
       onClick={onClick}
-      className="relative h-[470px] w-[78px] overflow-hidden"
+      className="relative w-[78px] overflow-hidden"
       style={{
+        height: 470,
         borderRadius: 14,
         border: `1px solid ${NEON_22}`,
         background:
           "radial-gradient(260px 520px at 50% 20%, rgba(0,255,182,0.06) 0%, rgba(0,0,0,0) 60%)," +
           "linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.00) 70%)",
       }}
+      whileHover={{ scale: 1.008 }}
+      transition={{
+        type: "spring",
+        stiffness: 240,
+        damping: 30,
+        mass: 1.05,
+      }}
     >
-      <div className="absolute left-1/2 -translate-x-1/2 top-10">
-        <span className="text-[22px] font-semibold tracking-wide" style={{ color: NEON_48 }}>
+      <div className="absolute left-1/2 -translate-x-1/2 top-8">
+        <span className="text-[18px] md:text-[22px] font-semibold tracking-wide" style={{ color: NEON_48 }}>
           {tab.number}
         </span>
       </div>
 
-      <div className="absolute left-1/2 -translate-x-1/2 bottom-20">
+      <div className="absolute inset-0 flex items-center justify-center">
         <span
-          className="whitespace-nowrap text-[22px] font-medium"
+          className="whitespace-nowrap text-[18px] md:text-[22px] font-medium"
           style={{
             color: NEON_48,
             writingMode: "vertical-rl",
             transform: "rotate(180deg)",
-            transformOrigin: "bottom center",
+            transformOrigin: "center",
           }}
         >
           {tab.label}
         </span>
       </div>
-    </button>
+    </motion.button>
   );
 }

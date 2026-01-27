@@ -47,9 +47,7 @@ export default function Navbar() {
     setLangOpen(false);
   };
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!mounted) return;
@@ -107,16 +105,14 @@ export default function Navbar() {
       <div className="mx-auto w-full max-w-[1240px] px-6">
         <motion.nav
           ref={navRef}
-          initial={{ opacity: 0, scale: 0.92, y: -10 }}
-          animate={{
-            opacity: 1,
-            scale: [1, 1.012, 1],
-            y: [0, -2, 0],
-          }}
+          initial={{ opacity: 0, y: -36, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{
-            opacity: { type: "spring", stiffness: 170, damping: 18, delay: 0.06 },
-            scale: { duration: 2.6, repeat: Infinity, ease: "easeInOut", delay: 0.35 },
-            y: { duration: 3.4, repeat: Infinity, ease: "easeInOut", delay: 0.35 },
+            delay: 0.08,
+            type: "spring",
+            stiffness: 180,
+            damping: 18,
+            mass: 0.9,
           }}
           className="
             relative
@@ -146,9 +142,31 @@ export default function Navbar() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="text-[12px] font-medium tracking-[0.12em] text-white/90"
+                className="
+                  group relative
+                  text-[12px] font-medium tracking-[0.12em]
+                  text-white/90
+                  transition-colors duration-200
+                  hover:text-white
+                "
               >
                 {l.label}
+
+                {/* underline motion */}
+                <span
+                  aria-hidden="true"
+                  className="
+                    pointer-events-none
+                    absolute left-0 -bottom-[7px]
+                    h-[2px] w-full
+                    origin-left
+                    scale-x-0
+                    rounded-full
+                    bg-[#EDE7DF]
+                    transition-transform duration-300 ease-out
+                    group-hover:scale-x-100
+                  "
+                />
               </Link>
             ))}
           </div>
@@ -159,8 +177,8 @@ export default function Navbar() {
             <div className="relative">
               <motion.button
                 type="button"
-                whileHover={{ scale: [1, 1.04, 1.02] }}
-                transition={{ duration: 0.25 }}
+                whileHover={{ scale: 1.03 }}
+                transition={{ duration: 0.18 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => {
                   setLangOpen((v) => !v);
@@ -177,6 +195,14 @@ export default function Navbar() {
                   text-[13px]
                   font-medium
                   text-[#111327]
+                  cursor-pointer
+                  ring-1 ring-black/10
+                  transition
+                  hover:ring-black/20
+                  hover:shadow-[0_10px_20px_rgba(0,0,0,0.18)]
+                  focus-visible:outline-none
+                  focus-visible:ring-2
+                  focus-visible:ring-white/70
                 "
                 aria-label="Change language"
                 aria-expanded={langOpen}
@@ -210,6 +236,8 @@ export default function Navbar() {
                     flex items-center justify-between
                     text-[13px] font-medium
                     text-[#111327]
+                    hover:bg-black/5
+                    transition
                   "
                   role="menuitem"
                 >
@@ -228,6 +256,8 @@ export default function Navbar() {
                     flex items-center justify-between
                     text-[13px] font-medium
                     text-[#111327]
+                    hover:bg-black/5
+                    transition
                   "
                   role="menuitem"
                 >
@@ -238,7 +268,7 @@ export default function Navbar() {
             </div>
 
             {/* Contact (Desktop + Tablet) */}
-            <motion.div whileHover={{ scale: [1, 1.04, 1.02] }} transition={{ duration: 0.25 }} whileTap={{ scale: 0.97 }}>
+            <motion.div whileHover={{ scale: 1.03 }} transition={{ duration: 0.18 }} whileTap={{ scale: 0.97 }}>
               <Link
                 href="#contact"
                 className="
@@ -252,6 +282,10 @@ export default function Navbar() {
                   text-[13px]
                   font-semibold
                   text-[#111327]
+                  ring-1 ring-black/10
+                  transition
+                  hover:ring-black/20
+                  hover:shadow-[0_10px_20px_rgba(0,0,0,0.18)]
                 "
                 aria-label="Contact us"
                 onClick={() => setMenuOpen(false)}
@@ -262,7 +296,7 @@ export default function Navbar() {
             </motion.div>
 
             {/* Contact (Mobile XS) */}
-            <motion.div className="sm:hidden" whileHover={{ scale: [1, 1.06, 1.02] }} transition={{ duration: 0.25 }} whileTap={{ scale: 0.97 }}>
+            <motion.div className="sm:hidden" whileHover={{ scale: 1.05 }} transition={{ duration: 0.18 }} whileTap={{ scale: 0.97 }}>
               <Link
                 href="#contact"
                 className="
@@ -274,6 +308,10 @@ export default function Navbar() {
                   items-center
                   justify-center
                   text-[#111327]
+                  ring-1 ring-black/10
+                  transition
+                  hover:ring-black/20
+                  hover:shadow-[0_10px_20px_rgba(0,0,0,0.18)]
                 "
                 aria-label="Contact us"
                 onClick={() => setMenuOpen(false)}
@@ -297,6 +335,9 @@ export default function Navbar() {
                 items-center
                 justify-center
                 text-white
+                cursor-pointer
+                transition
+                hover:bg-white/15
               "
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}
@@ -335,7 +376,13 @@ export default function Navbar() {
                   key={l.href}
                   href={l.href}
                   onClick={() => setMenuOpen(false)}
-                  className="py-2 text-[12px] font-medium tracking-[0.12em] text-white/90"
+                  className="
+                    relative
+                    py-2
+                    text-[12px] font-medium tracking-[0.12em] text-white/90
+                    transition-colors
+                    hover:text-white
+                  "
                 >
                   {l.label}
                 </Link>

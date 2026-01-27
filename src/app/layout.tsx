@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Cairo } from "next/font/google";
 import "./globals.css";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const godber = localFont({
   src: "../assets/fonts/godber/Godber.ttf",
@@ -29,6 +30,9 @@ const cairo = Cairo({
 export const metadata: Metadata = {
   title: "Creators Hub",
   description: "Creators Hub — Social Media Agency",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -39,7 +43,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${godber.variable} ${kollektif.variable} ${cairo.variable} font-en`}
       suppressHydrationWarning
     >
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+      <SmoothScroll />
+      {children}
+      </body>
     </html>
   );
 }

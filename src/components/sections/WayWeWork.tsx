@@ -1,7 +1,13 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import React, { useMemo, useRef, useState } from "react";
+import {
+  motion,
+  useScroll,
+  useSpring,
+  useTransform,
+  type MotionValue,
+} from "framer-motion";
 import Image from "next/image";
 
 /* =========================
@@ -13,7 +19,6 @@ export default function Page() {
     <main className="w-full">
       <WayWeWork />
 
-      {/* ✅ هنا المكان الصح لتمرير الصورة */}
       <HowWeHelp
         bigIcon={
           <Image
@@ -34,21 +39,57 @@ export default function Page() {
 ========================= */
 
 function WayWeWork() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
   return (
-    <section id="our-work" className="w-full bg-white overflow-x-hidden">
+    <section
+      ref={sectionRef}
+      id="our-work"
+      className="w-full bg-white overflow-x-hidden"
+    >
       <div className="mx-auto w-full max-w-[1240px] px-4 sm:px-6">
         <div className="relative w-full overflow-visible">
-          <div
-            className="relative z-20 w-full h-[420px] sm:h-[520px] lg:h-[560px] rounded-[22px] overflow-hidden"
-            style={{
-              backgroundImage: "url('/waywork/bg.svg')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              backgroundColor: "#F3FF00",
-            }}
-          />
+          {/* ✅ ثابت */}
+          <div className="relative z-20 w-full h-[420px] sm:h-[520px] lg:h-[560px] rounded-[22px] overflow-hidden bg-[#F3FF00]">
+            {/* ✅ الصورة نفسها: Pulse أسرع + يمين/شمال + ميل خفيف */}
+            <motion.img
+              src="/waywork/bg.svg"
+              alt=""
+              draggable={false}
+              className="absolute inset-0 h-full w-full select-none object-cover"
+              style={{
+                transformOrigin: "50% 50%",
+                willChange: "transform",
+              }}
+              animate={{
+                scale: [1, 1.065, 1],     // ✅ نبضة
+                x: [0, 18, 0, -18, 0],    // ✅ يمين/شمال
+                rotate: [0, 0.6, 0, -0.6, 0], // ✅ ميل بسيط
+              }}
+              transition={{
+                duration: 2.6, // ✅ أسرع
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
 
+            {/* vignette خفيف للقراءة */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(1200px 650px at 50% 50%, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0) 62%)",
+              }}
+            />
+          </div>
+
+          {/* content overlay */}
           <div className="pointer-events-none absolute inset-0 z-30">
             <h2
               className="
@@ -66,6 +107,8 @@ function WayWeWork() {
             </h2>
 
             <AirPill
+              progress={scrollYProgress}
+              strength={120}
               label="DISCOVERY & STRATEGY"
               className="left-[34%] top-[16%] sm:left-[25%] sm:top-[20%]"
               trail="left"
@@ -73,6 +116,8 @@ function WayWeWork() {
               trailClass="bg-[#C9D240]/45"
             />
             <AirPill
+              progress={scrollYProgress}
+              strength={140}
               label="PROFESSIONALISM"
               className="left-[74%] top-[10%] sm:left-[84%] sm:top-[16%]"
               trail="right"
@@ -80,6 +125,8 @@ function WayWeWork() {
               trailClass="bg-[#D8D8DD]/55"
             />
             <AirPill
+              progress={scrollYProgress}
+              strength={150}
               label="CREATIVE PRODUCTION & DESIGN"
               className="left-[72%] top-[24%] sm:left-[58%] sm:top-[30%]"
               trail="right"
@@ -87,6 +134,8 @@ function WayWeWork() {
               trailClass="bg-[#AFC6FF]/45"
             />
             <AirPill
+              progress={scrollYProgress}
+              strength={110}
               label="TRANSPARENCY"
               className="left-1/2 top-[55%] sm:left-[46%] sm:top-[54%]"
               trail="left"
@@ -94,6 +143,8 @@ function WayWeWork() {
               trailClass="bg-[#10E6C6]/22"
             />
             <AirPill
+              progress={scrollYProgress}
+              strength={150}
               label="ANALYSIS & OPTIMIZATION"
               className="left-[30%] top-[72%] sm:left-[16%] sm:top-[68%]"
               trail="left"
@@ -101,6 +152,8 @@ function WayWeWork() {
               trailClass="bg-[#151B3A]/30"
             />
             <AirPill
+              progress={scrollYProgress}
+              strength={170}
               label="EXECUTION & MANAGEMENT"
               className="left-[64%] top-[86%] sm:left-[64%] sm:top-[82%]"
               trail="right"
@@ -120,15 +173,37 @@ function AirPill({
   trail,
   pillClass,
   trailClass,
+  progress,
+  strength = 140,
 }: {
   label: string;
   className: string;
   trail: "left" | "right" | "none";
   pillClass: string;
   trailClass: string;
+  progress: MotionValue<number>;
+  strength?: number;
 }) {
+  const dir = trail === "right" ? 1 : trail === "left" ? -1 : 0;
+
+  const x = useTransform(
+    progress,
+    [0, 0.5, 1],
+    [dir * strength, 0, dir * -strength]
+  );
+
+  const xSpring = useSpring(x, { stiffness: 120, damping: 22, mass: 0.8 });
+
+  const opacity = useTransform(progress, [0.08, 0.18, 0.9], [0, 1, 1]);
+  const opacitySpring = useSpring(opacity, { stiffness: 120, damping: 24 });
+
   return (
-    <div className={["absolute -translate-x-1/2 -translate-y-1/2", className].join(" ")}>
+    <motion.div
+      style={{ x: xSpring, opacity: opacitySpring }}
+      className={["absolute -translate-x-1/2 -translate-y-1/2", className].join(
+        " "
+      )}
+    >
       {trail !== "none" && (
         <span
           aria-hidden="true"
@@ -158,7 +233,7 @@ function AirPill({
       >
         {label}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -184,7 +259,6 @@ const NAVY = "#181B4A";
 const NEON = "#00FFB6";
 const NEON_48 = "rgba(0,255,182,0.48)";
 const NEON_22 = "rgba(0,255,182,0.22)";
-const NEON_18 = "rgba(0,255,182,0.18)";
 
 function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
   const tabs: Tab[] = useMemo(
@@ -203,30 +277,9 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
         ],
       },
       { id: "t2", number: "02", label: "Design", title: "Design", desc: "", bullets: [] },
-      {
-        id: "t3",
-        number: "03",
-        label: "Social Media Management",
-        title: "Social Media Management",
-        desc: "",
-        bullets: [],
-      },
-      {
-        id: "t4",
-        number: "04",
-        label: "Growth & Strategy",
-        title: "Growth & Strategy",
-        desc: "",
-        bullets: [],
-      },
-      {
-        id: "t5",
-        number: "05",
-        label: "Analytics & Reporting",
-        title: "Analytics & Reporting",
-        desc: "",
-        bullets: [],
-      },
+      { id: "t3", number: "03", label: "Social Media Management", title: "Social Media Management", desc: "", bullets: [] },
+      { id: "t4", number: "04", label: "Growth & Strategy", title: "Growth & Strategy", desc: "", bullets: [] },
+      { id: "t5", number: "05", label: "Analytics & Reporting", title: "Analytics & Reporting", desc: "", bullets: [] },
     ],
     []
   );
@@ -244,7 +297,6 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
 
   return (
     <section id="how-we-help" className={`relative w-full ${className}`} style={{ background: NAVY }}>
-      {/* الشريط الكحلي 100% داخل تحت الأصفر */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 -top-[140px] sm:-top-[170px] h-[170px] sm:h-[210px]"
@@ -338,7 +390,6 @@ function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) 
           ))}
         </ul>
 
-        {/* ✅ ده مكان الصورة الصح (هتظهر طالما bigIcon اتبعت من Page) */}
         <div className="pointer-events-none absolute bottom-10 right-10">
           <div className="h-[170px] w-[260px]">{bigIcon ?? null}</div>
         </div>
@@ -348,7 +399,7 @@ function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) 
 }
 
 /* =========================
-   Closed Column (fix: bottom-to-top title)
+   Closed Column
 ========================= */
 
 function ClosedColumn({ tab, onClick }: { tab: Tab; onClick: () => void }) {
@@ -365,27 +416,25 @@ function ClosedColumn({ tab, onClick }: { tab: Tab; onClick: () => void }) {
           "linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.00) 70%)",
       }}
     >
-      {/* number top */}
       <div className="absolute left-1/2 -translate-x-1/2 top-10">
         <span className="text-[22px] font-semibold tracking-wide" style={{ color: NEON_48 }}>
           {tab.number}
         </span>
       </div>
 
-      {/* ✅ title bottom-to-top like the screenshot */}
       <div className="absolute left-1/2 -translate-x-1/2 bottom-20">
-  <span
-    className="whitespace-nowrap text-[22px] font-medium"
-    style={{
-      color: NEON_48,
-      writingMode: "vertical-rl",
-      transform: "rotate(180deg)",
-      transformOrigin: "bottom center",
-    }}
-  >
-    {tab.label}
-  </span>
-</div>
+        <span
+          className="whitespace-nowrap text-[22px] font-medium"
+          style={{
+            color: NEON_48,
+            writingMode: "vertical-rl",
+            transform: "rotate(180deg)",
+            transformOrigin: "bottom center",
+          }}
+        >
+          {tab.label}
+        </span>
+      </div>
     </button>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FiGlobe, FiArrowRight, FiMenu, FiX, FiCheck } from "react-icons/fi";
+import { motion } from "framer-motion";
 
 const navLinks = [
   { href: "#our-work", label: "OUR WORK" },
@@ -16,7 +17,7 @@ type Lang = "EN" | "AR";
 const LANG_STORAGE_KEY = "ch_lang";
 
 function applyDocLang(next: Lang) {
-  if (typeof document === "undefined") return; // safety
+  if (typeof document === "undefined") return;
   const html = document.documentElement;
 
   if (next === "AR") {
@@ -46,12 +47,10 @@ export default function Navbar() {
     setLangOpen(false);
   };
 
-  // ✅ mark mounted (client only)
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // ✅ Load saved language AFTER mount (prevents hydration mismatch)
   useEffect(() => {
     if (!mounted) return;
 
@@ -62,12 +61,11 @@ export default function Navbar() {
     applyDocLang(saved);
   }, [mounted]);
 
-  // ✅ Close menus on resize to desktop
   useEffect(() => {
     if (!mounted) return;
 
     const onResize = () => {
-      if (window.innerWidth >= 1024) setMenuOpen(false); // lg
+      if (window.innerWidth >= 1024) setMenuOpen(false);
       setLangOpen(false);
     };
 
@@ -75,7 +73,6 @@ export default function Navbar() {
     return () => window.removeEventListener("resize", onResize);
   }, [mounted]);
 
-  // ✅ Close on outside click + on scroll
   useEffect(() => {
     if (!mounted) return;
 
@@ -108,8 +105,19 @@ export default function Navbar() {
   return (
     <header className="w-full">
       <div className="mx-auto w-full max-w-[1240px] px-6">
-        <nav
+        <motion.nav
           ref={navRef}
+          initial={{ opacity: 0, scale: 0.92, y: -10 }}
+          animate={{
+            opacity: 1,
+            scale: [1, 1.012, 1],
+            y: [0, -2, 0],
+          }}
+          transition={{
+            opacity: { type: "spring", stiffness: 170, damping: 18, delay: 0.06 },
+            scale: { duration: 2.6, repeat: Infinity, ease: "easeInOut", delay: 0.35 },
+            y: { duration: 3.4, repeat: Infinity, ease: "easeInOut", delay: 0.35 },
+          }}
           className="
             relative
             h-[72px]
@@ -120,19 +128,14 @@ export default function Navbar() {
             flex
             items-center
             justify-between
+            will-change-transform
           "
         >
           {/* LEFT: Logo */}
           <div className="flex items-center">
             <Link href="/" aria-label="Creators Hub Home" className="inline-flex items-center">
               <div className="relative h-[28px] w-[140px]">
-                <Image
-                  src="/brand/logo.svg"
-                  alt="Creators Hub"
-                  fill
-                  className="object-contain"
-                  priority
-                />
+                <Image src="/brand/logo.svg" alt="Creators Hub" fill className="object-contain" priority />
               </div>
             </Link>
           </div>
@@ -152,10 +155,13 @@ export default function Navbar() {
 
           {/* RIGHT: Actions */}
           <div className="flex items-center gap-3">
-            {/* Language (Desktop: icon + EN/AR) (Mobile: icon only) */}
+            {/* Language */}
             <div className="relative">
-              <button
+              <motion.button
                 type="button"
+                whileHover={{ scale: [1, 1.04, 1.02] }}
+                transition={{ duration: 0.25 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => {
                   setLangOpen((v) => !v);
                   if (!langOpen) setMenuOpen(false);
@@ -178,7 +184,7 @@ export default function Navbar() {
               >
                 <FiGlobe className="text-[16px]" />
                 <span className="hidden sm:inline">{lang}</span>
-              </button>
+              </motion.button>
 
               {/* Language dropdown */}
               <div
@@ -232,50 +238,55 @@ export default function Navbar() {
             </div>
 
             {/* Contact (Desktop + Tablet) */}
-            <Link
-              href="#contact"
-              className="
-                hidden sm:flex
-                h-[44px]
-                rounded-[10px]
-                bg-[#EDE7DF]
-                px-5
-                items-center
-                gap-3
-                text-[13px]
-                font-semibold
-                text-[#111327]
-              "
-              aria-label="Contact us"
-              onClick={() => setMenuOpen(false)}
-            >
-              <span className="uppercase tracking-[0.08em]">CONTACT US</span>
-              <FiArrowRight className="text-[18px]" />
-            </Link>
+            <motion.div whileHover={{ scale: [1, 1.04, 1.02] }} transition={{ duration: 0.25 }} whileTap={{ scale: 0.97 }}>
+              <Link
+                href="#contact"
+                className="
+                  hidden sm:flex
+                  h-[44px]
+                  rounded-[10px]
+                  bg-[#EDE7DF]
+                  px-5
+                  items-center
+                  gap-3
+                  text-[13px]
+                  font-semibold
+                  text-[#111327]
+                "
+                aria-label="Contact us"
+                onClick={() => setMenuOpen(false)}
+              >
+                <span className="uppercase tracking-[0.08em]">CONTACT US</span>
+                <FiArrowRight className="text-[18px]" />
+              </Link>
+            </motion.div>
 
-            {/* Contact (Mobile XS) icon-only */}
-            <Link
-              href="#contact"
-              className="
-                sm:hidden
-                h-[44px]
-                w-[44px]
-                rounded-[10px]
-                bg-[#EDE7DF]
-                flex
-                items-center
-                justify-center
-                text-[#111327]
-              "
-              aria-label="Contact us"
-              onClick={() => setMenuOpen(false)}
-            >
-              <FiArrowRight className="text-[18px]" />
-            </Link>
+            {/* Contact (Mobile XS) */}
+            <motion.div className="sm:hidden" whileHover={{ scale: [1, 1.06, 1.02] }} transition={{ duration: 0.25 }} whileTap={{ scale: 0.97 }}>
+              <Link
+                href="#contact"
+                className="
+                  h-[44px]
+                  w-[44px]
+                  rounded-[10px]
+                  bg-[#EDE7DF]
+                  flex
+                  items-center
+                  justify-center
+                  text-[#111327]
+                "
+                aria-label="Contact us"
+                onClick={() => setMenuOpen(false)}
+              >
+                <FiArrowRight className="text-[18px]" />
+              </Link>
+            </motion.div>
 
             {/* Burger (Mobile/Tablet only) */}
-            <button
+            <motion.button
               type="button"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.96 }}
               className="
                 lg:hidden
                 h-[44px]
@@ -296,7 +307,7 @@ export default function Navbar() {
               }}
             >
               {menuOpen ? <FiX className="text-[20px]" /> : <FiMenu className="text-[20px]" />}
-            </button>
+            </motion.button>
           </div>
 
           {/* Mobile Dropdown */}
@@ -331,7 +342,7 @@ export default function Navbar() {
               ))}
             </div>
           </div>
-        </nav>
+        </motion.nav>
       </div>
     </header>
   );

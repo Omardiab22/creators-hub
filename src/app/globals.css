@@ -1,26 +1,18 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+html, body { height: 100%; }
+
+/* EN default = Kollektif */
+html.font-en body {
+  font-family: var(--font-kollektif), system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* AR = Cairo */
+html.font-ar body {
+  font-family: var(--font-cairo), system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Godber for headings */
+.font-head {
+  font-family: var(--font-godber), system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }

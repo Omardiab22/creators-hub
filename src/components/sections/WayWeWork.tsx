@@ -391,7 +391,11 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
         <div className="mt-8 sm:mt-10">
           {/* Mobile */}
           <div className="md:hidden">
-            <ActivePanel key={activeTab.id} tab={activeTab} bigIcon={bigIcon} />
+            <div className="relative h-[470px]">
+              <AnimatePresence mode="wait">
+                <ActivePanel key={activeTab.id} tab={activeTab} bigIcon={bigIcon} transition={contentTransition} />
+              </AnimatePresence>
+            </div>
 
             <div className="mt-5 flex gap-3 overflow-x-auto pb-2">
               {tabs.map((t) => {

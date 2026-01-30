@@ -328,13 +328,21 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
 
   const activeTab = tabs[activeIndex] ?? tabs[0];
 
-  // ✅ Smooth slower transition config (shared)
-  const smoothLayout = useMemo(
+  // ✅ Improved animation config
+  const columnTransition = useMemo(
     () => ({
       type: "spring" as const,
-      stiffness: 220,
-      damping: 32,
-      mass: 1.15,
+      stiffness: 280,
+      damping: 38,
+      mass: 0.8,
+    }),
+    []
+  );
+
+  const contentTransition = useMemo(
+    () => ({
+      duration: 0.35,
+      ease: [0.25, 0.1, 0.25, 1],
     }),
     []
   );
@@ -418,26 +426,36 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             className="hidden md:block"
           >
-            <motion.div
-              layout
-              className="grid gap-6"
-              style={{ gridTemplateColumns: gridCols }}
-              transition={smoothLayout}
-            >
-              {tabs.map((t) => {
+            <div className="flex gap-6">
+              {tabs.map((t, idx) => {
                 const isActive = t.id === activeId;
 
                 return (
-                  <motion.div key={t.id} layout transition={smoothLayout}>
-                    {isActive ? (
-                      <ActivePanel key={t.id} tab={t} bigIcon={bigIcon} />
-                    ) : (
-                      <ClosedColumn tab={t} onClick={() => setActiveId(t.id)} />
-                    )}
+                  <motion.div
+                    key={t.id}
+                    animate={{
+                      width: isActive ? "100%" : "78px",
+                      flex: isActive ? "1 1 0%" : "0 0 78px",
+                    }}
+                    transition={columnTransition}
+                    className="relative"
+                  >
+                    <AnimatePresence mode="wait">
+                      {isActive ? (
+                        <ActivePanel key={t.id} tab={t} bigIcon={bigIcon} transition={contentTransition} />
+                      ) : (
+                        <ClosedColumn
+                          key={`closed-${t.id}`}
+                          tab={t}
+                          onClick={() => setActiveId(t.id)}
+                          transition={contentTransition}
+                        />
+                      )}
+                    </AnimatePresence>
                   </motion.div>
                 );
               })}
-            </motion.div>
+            </div>
           </motion.div>
         </div>
       </div>

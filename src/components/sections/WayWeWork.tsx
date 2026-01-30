@@ -316,36 +316,8 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
   );
 
   const [activeId, setActiveId] = useState<string>(tabs[0].id);
-
-  // ✅ active index
   const activeIndex = useMemo(() => tabs.findIndex((t) => t.id === activeId), [tabs, activeId]);
-
-  // ✅ grid columns: active = 1fr, others = 78px
-  const gridCols = useMemo(
-    () => tabs.map((t) => (t.id === activeId ? "minmax(0, 1fr)" : "78px")).join(" "),
-    [tabs, activeId]
-  );
-
   const activeTab = tabs[activeIndex] ?? tabs[0];
-
-  // ✅ Improved animation config
-  const columnTransition = useMemo(
-    () => ({
-      type: "spring" as const,
-      stiffness: 280,
-      damping: 38,
-      mass: 0.8,
-    }),
-    []
-  );
-
-  const contentTransition = useMemo(
-    () => ({
-      duration: 0.35,
-      ease: [0.25, 0.1, 0.25, 1],
-    }),
-    []
-  );
 
   return (
     <section id="how-we-help" className={`relative w-full ${className}`} style={{ background: NAVY }}>
@@ -356,46 +328,24 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
       />
 
       <div className="mx-auto max-w-6xl px-4 py-12 sm:py-14 md:py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="grid gap-6 md:grid-cols-[1fr_1fr] md:items-start"
-        >
+        <div className="grid gap-6 md:grid-cols-[1fr_1fr] md:items-start">
           <div className="flex items-center gap-3">
-            <motion.span
-              className="h-2 w-2"
-              style={{ background: NEON }}
-              animate={{ scale: [1, 1.3, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            />
+            <span className="h-2 w-2" style={{ background: NEON }} />
             <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight" style={{ color: NEON }}>
               HOW WE HELP
             </h2>
           </div>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-sm md:text-base leading-relaxed"
-            style={{ color: NEON_48 }}
-          >
+          <p className="text-sm md:text-base leading-relaxed" style={{ color: NEON_48 }}>
             We handle the entire lifecycle of your content. We build your roadmap, create your visuals, manage
             your launch, and scale your reach.
-          </motion.p>
-        </motion.div>
+          </p>
+        </div>
 
         <div className="mt-8 sm:mt-10">
           {/* Mobile */}
           <div className="md:hidden">
-            <div className="relative h-[470px]">
-              <AnimatePresence mode="wait">
-                <ActivePanel key={activeTab.id} tab={activeTab} bigIcon={bigIcon} transition={contentTransition} />
-              </AnimatePresence>
-            </div>
+            <ActivePanel tab={activeTab} bigIcon={bigIcon} />
 
             <div className="mt-5 flex gap-3 overflow-x-auto pb-2">
               {tabs.map((t) => {
@@ -405,14 +355,11 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
                     key={t.id}
                     type="button"
                     onClick={() => setActiveId(t.id)}
-                    className={[
-                      "shrink-0 rounded-full px-4 py-2 text-[12px] font-semibold",
-                      "border transition",
-                      isActive ? "text-[#081B17]" : "text-white/80",
-                    ].join(" ")}
+                    className="shrink-0 rounded-full px-4 py-2 text-[12px] font-semibold border transition-all duration-300"
                     style={{
                       borderColor: isActive ? NEON : NEON_22,
                       backgroundColor: isActive ? NEON : "rgba(255,255,255,0.04)",
+                      color: isActive ? "#081B17" : "rgba(255,255,255,0.8)",
                     }}
                   >
                     {t.number} • {t.label}
@@ -423,44 +370,30 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
           </div>
 
           {/* Desktop */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="hidden md:block"
-          >
-            <div className="flex gap-6">
-              {tabs.map((t, idx) => {
+          <div className="hidden md:block">
+            <div className="flex gap-4 h-[470px]">
+              {tabs.map((t) => {
                 const isActive = t.id === activeId;
 
                 return (
-                  <motion.div
+                  <div
                     key={t.id}
-                    animate={{
-                      width: isActive ? "100%" : "78px",
+                    className="relative h-full transition-all duration-500 ease-out"
+                    style={{
                       flex: isActive ? "1 1 0%" : "0 0 78px",
+                      minWidth: isActive ? "0" : "78px",
                     }}
-                    transition={columnTransition}
-                    className="relative h-[470px]"
                   >
-                    <AnimatePresence mode="wait">
-                      {isActive ? (
-                        <ActivePanel key={t.id} tab={t} bigIcon={bigIcon} transition={contentTransition} />
-                      ) : (
-                        <ClosedColumn
-                          key={`closed-${t.id}`}
-                          tab={t}
-                          onClick={() => setActiveId(t.id)}
-                          transition={contentTransition}
-                        />
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
+                    {isActive ? (
+                      <ActivePanel tab={t} bigIcon={bigIcon} />
+                    ) : (
+                      <ClosedColumn tab={t} onClick={() => setActiveId(t.id)} />
+                    )}
+                  </div>
                 );
               })}
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

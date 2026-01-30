@@ -429,6 +429,9 @@ function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) 
   return (
     <motion.div
       layout
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="relative overflow-hidden"
       style={{
         borderRadius: 14,
@@ -465,9 +468,32 @@ function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) 
 
               {!!tab.bullets?.length && (
                 <ul className="mt-10 md:mt-20 space-y-3">
-                  {tab.bullets.map((b) => (
-                    <li key={b} className="flex items-center gap-3">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ color: NEON }}>
+                  {tab.bullets.map((b, idx) => (
+                    <motion.li
+                      key={b}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        delay: 0.3 + idx * 0.1,
+                        duration: 0.4,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                      className="flex items-center gap-3"
+                    >
+                      <motion.svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        style={{ color: NEON }}
+                        animate={{ x: [0, 3, 0] }}
+                        transition={{
+                          delay: 0.5 + idx * 0.1,
+                          duration: 1.5,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        }}
+                      >
                         <path
                           d="M9 18L15 12L9 6"
                           stroke="currentColor"
@@ -475,23 +501,32 @@ function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) 
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
-                      </svg>
+                      </motion.svg>
 
                       <span className="text-[13px] md:text-[14px] font-medium" style={{ color: NEON }}>
                         {b}
                       </span>
-                    </li>
+                    </motion.li>
                   ))}
                 </ul>
               )}
             </motion.div>
           </AnimatePresence>
 
-          <div className="pointer-events-none absolute bottom-7 right-7 md:bottom-10 md:right-10">
-            <div className="h-[120px] w-[180px] md:h-[140px] md:w-[220px] opacity-95">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+            animate={{ opacity: 0.95, scale: 1, rotate: 0 }}
+            transition={{ delay: 0.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="pointer-events-none absolute bottom-7 right-7 md:bottom-10 md:right-10"
+          >
+            <motion.div
+              animate={{ y: [0, -8, 0], rotate: [0, 2, 0] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              className="h-[120px] w-[180px] md:h-[140px] md:w-[220px]"
+            >
               {bigIcon ?? null}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </motion.div>

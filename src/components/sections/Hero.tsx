@@ -31,13 +31,11 @@ function useTypeLoop(words: string[]) {
 
     let t: number;
 
-    // finished typing current word
     if (!deleting && text === current) {
       t = window.setTimeout(() => setDeleting(true), HOLD_AFTER_TYPE);
       return () => window.clearTimeout(t);
     }
 
-    // finished deleting
     if (deleting && text === "") {
       t = window.setTimeout(() => {
         setDeleting(false);
@@ -46,7 +44,6 @@ function useTypeLoop(words: string[]) {
       return () => window.clearTimeout(t);
     }
 
-    // typing/deleting step
     t = window.setTimeout(() => {
       const next = deleting
         ? current.slice(0, Math.max(0, text.length - 1))
@@ -62,7 +59,6 @@ function useTypeLoop(words: string[]) {
 }
 
 export default function Hero() {
-  // ✅ typing text (تقدر تزود كلمات لو تحب)
   const typed = useTypeLoop(["WELCOME"]);
 
   return (
@@ -80,12 +76,8 @@ export default function Hero() {
           <Navbar />
         </div>
 
-        <div className="relative mt-6 sm:mt-10 min-h-[520px] sm:min-h-[560px] pb-[120px] sm:pb-[140px] w-full">
-          {/* Frame container */}
-          <div className="pointer-events-none absolute inset-0">
-            <div className="mx-auto h-full w-full max-w-[1240px] relative" />
-          </div>
-
+        {/* ✅ Layout: content في النص + padding يحجز مساحة للـ icons */}
+        <div className="relative mt-6 sm:mt-10 min-h-[640px] sm:min-h-[700px] w-full">
           {/* Plus strips */}
           <div className="pointer-events-none absolute inset-0 z-20">
             <div className="mx-auto h-full w-full max-w-[1240px] relative">
@@ -112,19 +104,16 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Floating icons */}
+          {/* ✅ Floating icons: 4 corners حوالين النص */}
           <div className="pointer-events-none absolute inset-0 z-10">
             <div className="mx-auto h-full w-full max-w-[1240px] relative">
-              {/* TARGET */}
+              {/* TOP LEFT (TARGET) */}
               <motion.div
-                className="
-                  absolute
-                  left-[70px] sm:left-[110px]
-                  top-[70px] sm:top-[78px]
-                  h-[46px] w-[46px]
-                  sm:h-[60px] sm:w-[60px]
-                  will-change-transform
-                "
+                className="absolute left-[14px] sm:left-[70px] top-[120px] sm:top-[120px] will-change-transform"
+                style={{
+                  width: "clamp(34px, 9vw, 60px)",
+                  height: "clamp(34px, 9vw, 60px)",
+                }}
                 initial={popIn(0.12).initial}
                 animate={popIn(0.12).animate}
                 transition={popIn(0.12).transition}
@@ -139,16 +128,13 @@ export default function Hero() {
                 />
               </motion.div>
 
-              {/* WIFI */}
+              {/* TOP RIGHT (WIFI) */}
               <motion.div
-                className="
-                  absolute
-                  right-[70px] sm:right-[120px]
-                  top-[58px] sm:top-[60px]
-                  h-[70px] w-[70px]
-                  sm:h-[120px] sm:w-[120px]
-                  will-change-transform
-                "
+                className="absolute right-[10px] sm:right-[80px] top-[110px] sm:top-[110px] will-change-transform"
+                style={{
+                  width: "clamp(74px, 18vw, 120px)",
+                  height: "clamp(74px, 18vw, 120px)",
+                }}
                 initial={popIn(0.2).initial}
                 animate={popIn(0.2).animate}
                 transition={popIn(0.2).transition}
@@ -163,16 +149,13 @@ export default function Hero() {
                 />
               </motion.div>
 
-              {/* ROCKET */}
+              {/* BOTTOM LEFT (ROCKET) */}
               <motion.div
-                className="
-                  absolute
-                  left-[30px] sm:left-[70px]
-                  bottom-[70px] sm:bottom-[90px]
-                  h-[140px] w-[140px]
-                  sm:h-[210px] sm:w-[210px]
-                  will-change-transform
-                "
+                className="absolute left-[-10px] sm:left-[40px] bottom-[50px] sm:bottom-[70px] will-change-transform"
+                style={{
+                  width: "clamp(130px, 34vw, 210px)",
+                  height: "clamp(130px, 34vw, 210px)",
+                }}
                 initial={popIn(0.28).initial}
                 animate={popIn(0.28).animate}
                 transition={popIn(0.28).transition}
@@ -187,16 +170,13 @@ export default function Hero() {
                 />
               </motion.div>
 
-              {/* BULB */}
+              {/* BOTTOM RIGHT (BULB) */}
               <motion.div
-                className="
-                  absolute
-                  right-[70px] sm:right-[120px]
-                  bottom-[80px] sm:bottom-[110px]
-                  h-[105px] w-[105px]
-                  sm:h-[150px] sm:w-[150px]
-                  will-change-transform
-                "
+                className="absolute right-[-8px] sm:right-[70px] bottom-[60px] sm:bottom-[80px] will-change-transform"
+                style={{
+                  width: "clamp(92px, 26vw, 150px)",
+                  height: "clamp(92px, 26vw, 150px)",
+                }}
                 initial={popIn(0.34).initial}
                 animate={popIn(0.34).animate}
                 transition={popIn(0.34).transition}
@@ -213,84 +193,98 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Center content */}
+          {/* ✅ Center content: في النص بالظبط + padding يبعده عن الزوايا */}
           <div className="relative z-30 mx-auto w-full max-w-[1240px] px-2 sm:px-6">
-            <div className="flex flex-col items-center text-center pt-8 sm:pt-10">
-              {/* ✅ WELCOME typing pill */}
-              <motion.div
-                initial={{ opacity: 0, y: 14, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: 0.08, type: "spring", stiffness: 160, damping: 18 }}
-                className="mb-5 sm:mb-6 inline-flex items-center gap-2 rounded-full bg-white/60 px-4 py-2 text-[10px] sm:text-[11px] font-semibold tracking-[0.14em] text-[#151A43] backdrop-blur"
-              >
-                <span>(</span>
-
-                {/* typing text */}
-                <span className="inline-flex items-center">
-                  <span className="min-w-[62px] text-left">{typed}</span>
-                  {/* blinking cursor */}
-                  <motion.span
-                    aria-hidden="true"
-                    className="ml-[2px] inline-block h-[12px] w-[1.5px] bg-[#151A43]"
-                    animate={{ opacity: [1, 0, 1] }}
-                    transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
-                  />
-                </span>
-
-                <span>)</span>
-                <span className="text-[13px] sm:text-[14px] leading-none">→</span>
-              </motion.div>
-
-              <motion.h1
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.14, type: "spring", stiffness: 140, damping: 18 }}
-                className="max-w-[980px] text-[#151A43]"
-              >
-                <span className="block text-[34px] sm:text-[52px] md:text-[66px] leading-[1.02] tracking-[-0.01em]">
-                  <span className="font-head">YOUR CREATIVE </span>
-                  <span className="font-bold">VISION,</span>
-                </span>
-
-                <span className="block text-[34px] sm:text-[52px] md:text-[66px] leading-[1.02] tracking-[-0.01em] font-bold">
-                  BROUGHT TO LIFE
-                </span>
-              </motion.h1>
-
-              <motion.p
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 140, damping: 18 }}
-                className="mt-5 sm:mt-6 max-w-[560px] text-[14px] sm:text-[18px] leading-[1.6] font-medium text-[#151A43]/85 px-2"
-              >
-                A full-service creative agency delivering professional video editing, social media management, stunning design, and content creation for brands and businesses of all sizes.
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 18, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: 0.26, type: "spring", stiffness: 160, damping: 18 }}
-                className="mt-7 sm:mt-9 flex items-center gap-3"
-              >
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="h-[48px] sm:h-[54px] rounded-[10px] bg-[#FF1E1E] px-6 sm:px-8 text-[13px] sm:text-[14px] font-medium text-white"
+            <div
+              className="
+                min-h-[640px] sm:min-h-[700px]
+                flex items-center justify-center
+                text-center
+                px-6 sm:px-14
+                pt-10
+                pb-10
+              "
+              style={{
+                // يحجز مساحة للـ icons فوق/تحت + جوانب
+                paddingTop: "clamp(70px, 11vw, 120px)",
+                paddingBottom: "clamp(90px, 16vw, 160px)",
+              }}
+            >
+              <div className="flex flex-col items-center">
+                {/* WELCOME typing pill */}
+                <motion.div
+                  initial={{ opacity: 0, y: 14, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: 0.08, type: "spring", stiffness: 160, damping: 18 }}
+                  className="mb-5 sm:mb-6 inline-flex items-center gap-2 rounded-full bg-white/60 px-4 py-2 text-[10px] sm:text-[11px] font-semibold tracking-[0.14em] text-[#151A43] backdrop-blur"
                 >
-                  Search Creator
-                </motion.button>
+                  <span>(</span>
 
-                <motion.button
-                  type="button"
-                  aria-label="Search"
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="h-[48px] w-[48px] sm:h-[54px] sm:w-[54px] rounded-[10px] bg-[#FF1E1E] text-white flex items-center justify-center"
+                  <span className="inline-flex items-center">
+                    <span className="min-w-[62px] text-left">{typed}</span>
+                    <motion.span
+                      aria-hidden="true"
+                      className="ml-[2px] inline-block h-[12px] w-[1.5px] bg-[#151A43]"
+                      animate={{ opacity: [1, 0, 1] }}
+                      transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                  </span>
+
+                  <span>)</span>
+                  <span className="text-[13px] sm:text-[14px] leading-none">→</span>
+                </motion.div>
+
+                <motion.h1
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.14, type: "spring", stiffness: 140, damping: 18 }}
+                  className="max-w-[980px] text-[#151A43]"
                 >
-                  <FiSearch className="text-[16px] sm:text-[18px]" />
-                </motion.button>
-              </motion.div>
+                  <span className="block text-[34px] sm:text-[52px] md:text-[66px] leading-[1.02] tracking-[-0.01em]">
+                    <span className="font-head">CREATORS HUB - </span>
+                    <span className="font-bold">WHERE</span>
+                  </span>
+
+                  <span className="block text-[34px] sm:text-[52px] md:text-[66px] leading-[1.02] tracking-[-0.01em] font-bold">
+                    IDEAS FIND THEIR VOICE
+                  </span>
+                </motion.h1>
+
+                <motion.p
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, type: "spring", stiffness: 140, damping: 18 }}
+                  className="mt-5 sm:mt-6 max-w-[560px] text-[14px] sm:text-[18px] leading-[1.6] font-medium text-[#151A43]/85 px-2"
+                >
+                  Creators Hub is a professional, trustworthy platform for content creators.
+                </motion.p>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 18, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: 0.26, type: "spring", stiffness: 160, damping: 18 }}
+                  className="mt-7 sm:mt-9 flex items-center gap-3"
+                >
+                  <motion.button
+                    type="button"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="h-[48px] sm:h-[54px] rounded-[10px] bg-[#FF1E1E] px-6 sm:px-8 text-[13px] sm:text-[14px] font-medium text-white"
+                  >
+                    Search Creator
+                  </motion.button>
+
+                  <motion.button
+                    type="button"
+                    aria-label="Search"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="h-[48px] w-[48px] sm:h-[54px] sm:w-[54px] rounded-[10px] bg-[#FF1E1E] text-white flex items-center justify-center"
+                  >
+                    <FiSearch className="text-[16px] sm:text-[18px]" />
+                  </motion.button>
+                </motion.div>
+              </div>
             </div>
           </div>
 

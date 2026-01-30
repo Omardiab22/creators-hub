@@ -463,70 +463,53 @@ function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) 
 }
 
 /* =========================
-   Closed Column (Centered Title)
+   Closed Column
 ========================= */
 
-function ClosedColumn({ tab, onClick, transition }: { tab: Tab; onClick: () => void; transition: any }) {
-  const [isHovered, setIsHovered] = React.useState(false);
-
+function ClosedColumn({ tab, onClick }: { tab: Tab; onClick: () => void }) {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={transition}
-      className="absolute inset-0 w-full h-full"
+    <button
+      type="button"
+      onClick={onClick}
+      className="group relative w-full h-full overflow-hidden rounded-[14px] cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+      style={{
+        border: `1px solid ${NEON_22}`,
+        background:
+          "radial-gradient(260px 520px at 50% 20%, rgba(0,255,182,0.06) 0%, rgba(0,0,0,0) 60%)," +
+          "linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.00) 70%)",
+      }}
     >
-      <button
-        type="button"
-        onClick={onClick}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        className="relative w-full h-[470px] overflow-hidden group"
+      {/* Hover glow */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-40 transition-opacity duration-300 rounded-[14px]"
         style={{
-          borderRadius: 14,
-          border: `1px solid ${isHovered ? NEON_48 : NEON_22}`,
-          background:
-            "radial-gradient(260px 520px at 50% 20%, rgba(0,255,182,0.06) 0%, rgba(0,0,0,0) 60%)," +
-            "linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.00) 70%)",
-          transition: "border-color 0.25s ease",
+          background: `radial-gradient(circle at center, ${NEON_22} 0%, transparent 70%)`,
         }}
-      >
-        {/* Hover glow effect */}
-        <div
-          className="absolute inset-0 pointer-events-none transition-opacity duration-300"
-          style={{
-            background: `radial-gradient(circle at center, ${NEON_22} 0%, transparent 70%)`,
-            opacity: isHovered ? 0.4 : 0,
-          }}
-        />
+      />
 
-        <div
-          className="absolute left-1/2 -translate-x-1/2 top-8 transition-all duration-250"
+      {/* Number at top */}
+      <div className="absolute left-1/2 -translate-x-1/2 top-8 transition-all duration-300 group-hover:-translate-y-1">
+        <span
+          className="text-[18px] md:text-[22px] font-semibold tracking-wide transition-colors duration-300 group-hover:text-[#00FFB6]"
+          style={{ color: NEON_48 }}
+        >
+          {tab.number}
+        </span>
+      </div>
+
+      {/* Vertical label */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span
+          className="whitespace-nowrap text-[18px] md:text-[22px] font-medium transition-colors duration-300 group-hover:text-[#00FFB6]"
           style={{
-            transform: `translate(-50%, ${isHovered ? "-3px" : "0"})`,
-            color: isHovered ? NEON : NEON_48,
+            writingMode: "vertical-rl",
+            transform: "rotate(180deg)",
+            color: NEON_48,
           }}
         >
-          <span className="text-[18px] md:text-[22px] font-semibold tracking-wide">
-            {tab.number}
-          </span>
-        </div>
-
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span
-            className="whitespace-nowrap text-[18px] md:text-[22px] font-medium transition-colors duration-250"
-            style={{
-              writingMode: "vertical-rl",
-              transform: "rotate(180deg)",
-              transformOrigin: "center",
-              color: isHovered ? NEON : NEON_48,
-            }}
-          >
-            {tab.label}
-          </span>
-        </div>
-      </button>
-    </motion.div>
+          {tab.label}
+        </span>
+      </div>
+    </button>
   );
 }

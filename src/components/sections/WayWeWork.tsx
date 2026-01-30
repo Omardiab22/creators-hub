@@ -467,53 +467,53 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
    Active Panel
 ========================= */
 
-function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) {
+function ActivePanel({ tab, bigIcon, transition }: { tab: Tab; bigIcon?: React.ReactNode; transition: any }) {
   return (
     <motion.div
-      layout
-      initial={{ opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="relative overflow-hidden"
-      style={{
-        borderRadius: 14,
-        border: `1px solid ${NEON_48}`,
-        background:
-          "radial-gradient(900px 520px at 40% 28%, rgba(0,255,182,0.09) 0%, rgba(0,0,0,0) 62%)," +
-          "radial-gradient(700px 420px at 88% 70%, rgba(0,255,182,0.06) 0%, rgba(0,0,0,0) 70%)," +
-          "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.00) 55%, rgba(0,0,0,0.06) 100%)",
-      }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={transition}
+      className="absolute inset-0 w-full h-full"
     >
-      {/* Pulsing border glow */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none rounded-[14px]"
+      <div
+        className="relative overflow-hidden h-full w-full"
         style={{
-          boxShadow: `0 0 0 1px ${NEON_48}`,
+          borderRadius: 14,
+          border: `1px solid ${NEON_48}`,
+          background:
+            "radial-gradient(900px 520px at 40% 28%, rgba(0,255,182,0.09) 0%, rgba(0,0,0,0) 62%)," +
+            "radial-gradient(700px 420px at 88% 70%, rgba(0,255,182,0.06) 0%, rgba(0,0,0,0) 70%)," +
+            "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.00) 55%, rgba(0,0,0,0.06) 100%)",
         }}
-        animate={{
-          boxShadow: [
-            `0 0 0 1px ${NEON_48}`,
-            `0 0 20px 2px ${NEON_22}`,
-            `0 0 0 1px ${NEON_48}`,
-          ],
-        }}
-        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <div className="relative h-[420px] md:h-[470px]">
-        <div className="absolute right-8 top-7 md:right-10 md:top-9">
-          <span className="text-[18px] md:text-[22px] font-semibold tracking-wide" style={{ color: NEON }}>
-            {tab.number}
-          </span>
-        </div>
+      >
+        {/* Subtle border glow */}
+        <div
+          className="absolute inset-0 pointer-events-none rounded-[14px]"
+          style={{
+            boxShadow: `0 0 20px 1px ${NEON_22}`,
+          }}
+        />
 
-        <div className="h-full px-6 md:px-10 pt-8 md:pt-10 pb-10">
-          <AnimatePresence mode="wait">
+        <div className="relative h-[420px] md:h-[470px]">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.15, duration: 0.3 }}
+            className="absolute right-8 top-7 md:right-10 md:top-9"
+          >
+            <span className="text-[18px] md:text-[22px] font-semibold tracking-wide" style={{ color: NEON }}>
+              {tab.number}
+            </span>
+          </motion.div>
+
+          <div className="h-full px-6 md:px-10 pt-8 md:pt-10 pb-10">
             <motion.div
               key={tab.id}
-              initial={{ opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }} // ✅ أهدى
-              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }} // ✅ smoother + slower
+              exit={{ opacity: 0, y: -5 }}
+              transition={{ delay: 0.1, duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <h3 className="text-[30px] md:text-[38px] leading-[1.05] font-medium" style={{ color: NEON }}>
                 {tab.title}
@@ -528,28 +528,21 @@ function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) 
                   {tab.bullets.map((b, idx) => (
                     <motion.li
                       key={b}
-                      initial={{ opacity: 0, x: -20 }}
+                      initial={{ opacity: 0, x: -15 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{
-                        delay: 0.3 + idx * 0.1,
-                        duration: 0.4,
-                        ease: [0.22, 1, 0.36, 1],
+                        delay: 0.2 + idx * 0.06,
+                        duration: 0.3,
+                        ease: [0.25, 0.1, 0.25, 1],
                       }}
                       className="flex items-center gap-3"
                     >
-                      <motion.svg
+                      <svg
                         width="14"
                         height="14"
                         viewBox="0 0 24 24"
                         fill="none"
                         style={{ color: NEON }}
-                        animate={{ x: [0, 3, 0] }}
-                        transition={{
-                          delay: 0.5 + idx * 0.1,
-                          duration: 1.5,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        }}
                       >
                         <path
                           d="M9 18L15 12L9 6"
@@ -558,7 +551,7 @@ function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) 
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
-                      </motion.svg>
+                      </svg>
 
                       <span className="text-[13px] md:text-[14px] font-medium" style={{ color: NEON }}>
                         {b}
@@ -568,22 +561,22 @@ function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) 
                 </ul>
               )}
             </motion.div>
-          </AnimatePresence>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-            animate={{ opacity: 0.95, scale: 1, rotate: 0 }}
-            transition={{ delay: 0.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="pointer-events-none absolute bottom-7 right-7 md:bottom-10 md:right-10"
-          >
             <motion.div
-              animate={{ y: [0, -8, 0], rotate: [0, 2, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              className="h-[120px] w-[180px] md:h-[140px] md:w-[220px]"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 0.95, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              className="pointer-events-none absolute bottom-7 right-7 md:bottom-10 md:right-10"
             >
-              {bigIcon ?? null}
+              <motion.div
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                className="h-[120px] w-[180px] md:h-[140px] md:w-[220px]"
+              >
+                {bigIcon ?? null}
+              </motion.div>
             </motion.div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </motion.div>

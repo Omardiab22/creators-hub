@@ -345,7 +345,20 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
         <div className="mt-8 sm:mt-10">
           {/* Mobile */}
           <div className="md:hidden">
-            <ActivePanel tab={activeTab} bigIcon={bigIcon} />
+            <div className="relative h-[470px]">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={activeTab.id}
+                  initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
+                  transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute inset-0"
+                >
+                  <ActivePanel tab={activeTab} bigIcon={bigIcon} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
             <div className="mt-5 flex gap-3 overflow-x-auto pb-2">
               {tabs.map((t) => {
@@ -384,11 +397,31 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
                       minWidth: isActive ? "0" : "78px",
                     }}
                   >
-                    {isActive ? (
-                      <ActivePanel tab={t} bigIcon={bigIcon} />
-                    ) : (
-                      <ClosedColumn tab={t} onClick={() => setActiveId(t.id)} />
-                    )}
+                    <AnimatePresence mode="wait" initial={false}>
+                      {isActive ? (
+                        <motion.div
+                          key={`${t.id}-active`}
+                          initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
+                          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                          exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
+                          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                          className="absolute inset-0"
+                        >
+                          <ActivePanel tab={t} bigIcon={bigIcon} />
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key={`${t.id}-closed`}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                          className="absolute inset-0"
+                        >
+                          <ClosedColumn tab={t} onClick={() => setActiveId(t.id)} />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 );
               })}
@@ -416,6 +449,17 @@ function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) 
           "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.00) 55%, rgba(0,0,0,0.06) 100%)",
       }}
     >
+      {/* Premium subtle sweep */}
+      <motion.div
+        aria-hidden="true"
+        className="absolute -inset-[60px] pointer-events-none opacity-[0.06]"
+        style={{
+          background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,255,182,0.75) 50%, rgba(0,0,0,0) 100%)",
+          transform: "rotate(12deg)",
+        }}
+        animate={{ x: [-40, 40] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+      />
       <div className="absolute right-8 top-7 md:right-10 md:top-9">
         <span className="text-[18px] md:text-[22px] font-semibold tracking-wide" style={{ color: NEON }}>
           {tab.number}

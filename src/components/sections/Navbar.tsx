@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FiGlobe, FiArrowRight, FiMenu, FiX, FiCheck } from "react-icons/fi";
+import { FiArrowRight, FiMenu, FiX } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 
 const navLinks = [
@@ -13,39 +13,15 @@ const navLinks = [
   { href: "#testimonials", label: "TESTIMONIALS" },
 ];
 
-type Lang = "EN" | "AR";
-const LANG_STORAGE_KEY = "ch_lang";
-
-function applyDocLang(next: Lang) {
-  if (typeof document === "undefined") return;
-  const html = document.documentElement;
-
-  if (next === "AR") {
-    html.setAttribute("dir", "rtl");
-    html.setAttribute("lang", "ar");
-    html.classList.remove("font-en");
-    html.classList.add("font-ar");
-  } else {
-    html.setAttribute("dir", "ltr");
-    html.setAttribute("lang", "en");
-    html.classList.remove("font-ar");
-    html.classList.add("font-en");
-  }
-}
-
 export default function Navbar() {
   const [mounted, setMounted] = useState(false);
-
   const [menuOpen, setMenuOpen] = useState(false);
-  const [langOpen, setLangOpen] = useState(false);
-  const [lang, setLang] = useState<Lang>("EN");
 
-  // ✅ بقى ref على wrapper شامل nav + dropdown (عشان click outside يشتغل صح)
+  // ✅ ref على wrapper شامل nav + dropdown (عشان click outside يشتغل صح)
   const navWrapRef = useRef<HTMLDivElement>(null);
 
   const closeAll = () => {
     setMenuOpen(false);
-    setLangOpen(false);
   };
 
   useEffect(() => setMounted(true), []);
@@ -53,19 +29,8 @@ export default function Navbar() {
   useEffect(() => {
     if (!mounted) return;
 
-    const savedRaw = localStorage.getItem(LANG_STORAGE_KEY);
-    const saved: Lang = savedRaw === "AR" || savedRaw === "EN" ? savedRaw : "EN";
-
-    setLang(saved);
-    applyDocLang(saved);
-  }, [mounted]);
-
-  useEffect(() => {
-    if (!mounted) return;
-
     const onResize = () => {
       if (window.innerWidth >= 1024) setMenuOpen(false);
-      setLangOpen(false);
     };
 
     window.addEventListener("resize", onResize);
@@ -83,7 +48,7 @@ export default function Navbar() {
     };
 
     const onScroll = () => {
-      if (menuOpen || langOpen) closeAll();
+      if (menuOpen) closeAll();
     };
 
     window.addEventListener("pointerdown", onPointerDown);
@@ -93,20 +58,12 @@ export default function Navbar() {
       window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("scroll", onScroll);
     };
-  }, [mounted, menuOpen, langOpen]);
-
-  const handleLangSelect = (next: Lang) => {
-    setLang(next);
-    setLangOpen(false);
-    localStorage.setItem(LANG_STORAGE_KEY, next);
-    applyDocLang(next);
-  };
+  }, [mounted, menuOpen]);
 
   return (
-    // ✅ الهيدر Sticky عادي… بس هيكبر لتحت لما المنيو تفتح
+    // ✅ الهيدر Sticky… وبيكبر لتحت لما المنيو تفتح
     <header className="sticky top-0 z-[9999] w-full pt-[env(safe-area-inset-top)]">
-      <div className="mx-auto w-full max-w-[1240px] px-4 sm:px-6">
-        {/* ✅ wrapper بيحتوي nav + mobile menu (عشان المنيو تبقى جزء من الـ layout) */}
+      <div className="mx-auto w-full max-w-[1240px] px-3 sm:px-6">
         <motion.div
           ref={navWrapRef}
           initial={{ opacity: 0, y: -36, scale: 0.98 }}
@@ -128,7 +85,7 @@ export default function Navbar() {
               w-full
               rounded-[14px]
               bg-[#151A43]
-              px-4 sm:px-6
+              px-3 xs:px-4 sm:px-6
               flex
               items-center
               justify-between
@@ -137,9 +94,17 @@ export default function Navbar() {
             "
           >
             {/* LEFT: Logo */}
-            <div className="flex items-center min-w-[140px]">
+            <div className="flex items-center min-w-0">
               <Link href="/" aria-label="Creators Hub Home" className="inline-flex items-center">
-                <div className="relative h-[28px] w-[140px]">
+                <div
+                  className="
+                    relative
+                    h-[26px]
+                    w-[112px]
+                    xs:h-[28px] xs:w-[128px]
+                    sm:h-[28px] sm:w-[140px]
+                  "
+                >
                   <Image src="/brand/logo.svg" alt="Creators Hub" fill className="object-contain" priority />
                 </div>
               </Link>
@@ -179,101 +144,7 @@ export default function Navbar() {
             </div>
 
             {/* RIGHT: Actions */}
-            <div className="flex items-center gap-3">
-              {/* Language */}
-              <div className="relative">
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.03 }}
-                  transition={{ duration: 0.18 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => {
-                    setLangOpen((v) => !v);
-                    if (!langOpen) setMenuOpen(false);
-                  }}
-                  className="
-                    h-[44px]
-                    rounded-[10px]
-                    bg-[#EDE7DF]
-                    px-4
-                    flex
-                    items-center
-                    gap-2
-                    text-[13px]
-                    font-medium
-                    text-[#111327]
-                    cursor-pointer
-                    ring-1 ring-black/10
-                    transition
-                    hover:ring-black/20
-                    hover:shadow-[0_10px_20px_rgba(0,0,0,0.18)]
-                    focus-visible:outline-none
-                    focus-visible:ring-2
-                    focus-visible:ring-white/70
-                  "
-                  aria-label="Change language"
-                  aria-expanded={langOpen}
-                  aria-haspopup="menu"
-                >
-                  <FiGlobe className="text-[16px]" />
-                  <span className="hidden sm:inline">{lang}</span>
-                </motion.button>
-
-                {/* Language dropdown */}
-                <div
-                  className={`
-                    absolute right-0 top-[52px] z-[10000]
-                    w-[140px]
-                    overflow-hidden
-                    rounded-[12px]
-                    bg-[#EDE7DF]
-                    shadow-lg
-                    transition-all duration-150
-                    ${langOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1 pointer-events-none"}
-                  `}
-                  role="menu"
-                  aria-label="Language menu"
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleLangSelect("EN")}
-                    className="
-                      w-full
-                      px-4 py-3
-                      flex items-center justify-between
-                      text-[13px] font-medium
-                      text-[#111327]
-                      hover:bg-black/5
-                      transition
-                    "
-                    role="menuitem"
-                  >
-                    <span>English</span>
-                    {lang === "EN" ? <FiCheck className="text-[16px]" /> : <span className="w-[16px]" />}
-                  </button>
-
-                  <div className="h-px w-full bg-black/10" />
-
-                  <button
-                    type="button"
-                    onClick={() => handleLangSelect("AR")}
-                    className="
-                      w-full
-                      px-4 py-3
-                      flex items-center justify-between
-                      text-[13px] font-medium
-                      text-[#111327]
-                      hover:bg-black/5
-                      transition
-                    "
-                    role="menuitem"
-                  >
-                    <span>العربية</span>
-                    {lang === "AR" ? <FiCheck className="text-[16px]" /> : <span className="w-[16px]" />}
-                  </button>
-                </div>
-              </div>
-
+            <div className="flex items-center gap-2 xs:gap-3 shrink-0">
               {/* Contact (Desktop + Tablet) */}
               <motion.div whileHover={{ scale: 1.03 }} transition={{ duration: 0.18 }} whileTap={{ scale: 0.97 }}>
                 <Link
@@ -303,12 +174,7 @@ export default function Navbar() {
               </motion.div>
 
               {/* Contact (Mobile XS) */}
-              <motion.div
-                className="sm:hidden"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.18 }}
-                whileTap={{ scale: 0.97 }}
-              >
+              <motion.div className="sm:hidden" whileHover={{ scale: 1.05 }} transition={{ duration: 0.18 }} whileTap={{ scale: 0.97 }}>
                 <Link
                   href="#contact"
                   className="
@@ -354,10 +220,7 @@ export default function Navbar() {
                 aria-label={menuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={menuOpen}
                 aria-controls="mobile-nav"
-                onClick={() => {
-                  setMenuOpen((v) => !v);
-                  if (!menuOpen) setLangOpen(false);
-                }}
+                onClick={() => setMenuOpen((v) => !v)}
               >
                 {menuOpen ? <FiX className="text-[20px]" /> : <FiMenu className="text-[20px]" />}
               </motion.button>
@@ -369,7 +232,7 @@ export default function Navbar() {
             {menuOpen && (
               <motion.div
                 id="mobile-nav"
-                className="lg:hidden mt-3 w-full overflow-hidden rounded-[14px] bg-[#151A43] px-6 shadow-[0_24px_70px_rgba(0,0,0,0.35)]"
+                className="lg:hidden mt-3 w-full overflow-hidden rounded-[14px] bg-[#151A43] px-5 sm:px-6 shadow-[0_24px_70px_rgba(0,0,0,0.35)]"
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}

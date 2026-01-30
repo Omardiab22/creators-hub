@@ -348,19 +348,37 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
       />
 
       <div className="mx-auto max-w-6xl px-4 py-12 sm:py-14 md:py-16">
-        <div className="grid gap-6 md:grid-cols-[1fr_1fr] md:items-start">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="grid gap-6 md:grid-cols-[1fr_1fr] md:items-start"
+        >
           <div className="flex items-center gap-3">
-            <span className="h-2 w-2" style={{ background: NEON }} />
+            <motion.span
+              className="h-2 w-2"
+              style={{ background: NEON }}
+              animate={{ scale: [1, 1.3, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
             <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight" style={{ color: NEON }}>
               HOW WE HELP
             </h2>
           </div>
 
-          <p className="text-sm md:text-base leading-relaxed" style={{ color: NEON_48 }}>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="text-sm md:text-base leading-relaxed"
+            style={{ color: NEON_48 }}
+          >
             We handle the entire lifecycle of your content. We build your roadmap, create your visuals, manage
             your launch, and scale your reach.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         <div className="mt-8 sm:mt-10">
           {/* Mobile */}
@@ -538,12 +556,16 @@ function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) 
 ========================= */
 
 function ClosedColumn({ tab, onClick }: { tab: Tab; onClick: () => void }) {
+  const [isHovered, setIsHovered] = React.useState(false);
+
   return (
     <motion.button
       layout
       type="button"
       onClick={onClick}
-      className="relative w-[78px] overflow-hidden"
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      className="relative w-[78px] overflow-hidden group"
       style={{
         height: 470,
         borderRadius: 14,
@@ -552,32 +574,56 @@ function ClosedColumn({ tab, onClick }: { tab: Tab; onClick: () => void }) {
           "radial-gradient(260px 520px at 50% 20%, rgba(0,255,182,0.06) 0%, rgba(0,0,0,0) 60%)," +
           "linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.00) 70%)",
       }}
-      whileHover={{ scale: 1.008 }}
+      whileHover={{
+        scale: 1.02,
+        borderColor: NEON_48,
+      }}
       transition={{
         type: "spring",
-        stiffness: 240,
-        damping: 30,
-        mass: 1.05,
+        stiffness: 300,
+        damping: 25,
+        mass: 0.9,
       }}
     >
-      <div className="absolute left-1/2 -translate-x-1/2 top-8">
-        <span className="text-[18px] md:text-[22px] font-semibold tracking-wide" style={{ color: NEON_48 }}>
+      {/* Hover glow effect */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(circle at center, ${NEON_22} 0%, transparent 70%)`,
+          opacity: 0,
+        }}
+        animate={{ opacity: isHovered ? 0.4 : 0 }}
+        transition={{ duration: 0.3 }}
+      />
+
+      <motion.div
+        className="absolute left-1/2 -translate-x-1/2 top-8"
+        animate={{
+          y: isHovered ? -3 : 0,
+          color: isHovered ? NEON : NEON_48,
+        }}
+        transition={{ duration: 0.25 }}
+      >
+        <span className="text-[18px] md:text-[22px] font-semibold tracking-wide">
           {tab.number}
         </span>
-      </div>
+      </motion.div>
 
       <div className="absolute inset-0 flex items-center justify-center">
-        <span
+        <motion.span
           className="whitespace-nowrap text-[18px] md:text-[22px] font-medium"
           style={{
-            color: NEON_48,
             writingMode: "vertical-rl",
             transform: "rotate(180deg)",
             transformOrigin: "center",
           }}
+          animate={{
+            color: isHovered ? NEON : NEON_48,
+          }}
+          transition={{ duration: 0.25 }}
         >
           {tab.label}
-        </span>
+        </motion.span>
       </div>
     </motion.button>
   );

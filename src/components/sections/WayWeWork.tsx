@@ -411,12 +411,18 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
           </div>
 
           {/* Desktop */}
-          <div className="hidden md:block">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="hidden md:block"
+          >
             <motion.div
               layout
               className="grid gap-6"
               style={{ gridTemplateColumns: gridCols }}
-              transition={{ layout: smoothLayout }} // ✅ أبطأ + سموز
+              transition={smoothLayout}
             >
               {tabs.map((t) => {
                 const isActive = t.id === activeId;
@@ -432,7 +438,7 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
                 );
               })}
             </motion.div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

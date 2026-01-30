@@ -404,119 +404,61 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
    Active Panel
 ========================= */
 
-function ActivePanel({ tab, bigIcon, transition }: { tab: Tab; bigIcon?: React.ReactNode; transition: any }) {
+function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={transition}
-      className="absolute inset-0 w-full h-full"
+    <div
+      className="relative overflow-hidden h-full w-full rounded-[14px]"
+      style={{
+        border: `1px solid ${NEON_48}`,
+        background:
+          "radial-gradient(900px 520px at 40% 28%, rgba(0,255,182,0.09) 0%, rgba(0,0,0,0) 62%)," +
+          "radial-gradient(700px 420px at 88% 70%, rgba(0,255,182,0.06) 0%, rgba(0,0,0,0) 70%)," +
+          "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.00) 55%, rgba(0,0,0,0.06) 100%)",
+      }}
     >
-      <div
-        className="relative overflow-hidden h-full w-full"
-        style={{
-          borderRadius: 14,
-          border: `1px solid ${NEON_48}`,
-          background:
-            "radial-gradient(900px 520px at 40% 28%, rgba(0,255,182,0.09) 0%, rgba(0,0,0,0) 62%)," +
-            "radial-gradient(700px 420px at 88% 70%, rgba(0,255,182,0.06) 0%, rgba(0,0,0,0) 70%)," +
-            "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.00) 55%, rgba(0,0,0,0.06) 100%)",
-        }}
-      >
-        {/* Subtle border glow */}
-        <div
-          className="absolute inset-0 pointer-events-none rounded-[14px]"
-          style={{
-            boxShadow: `0 0 20px 1px ${NEON_22}`,
-          }}
-        />
-
-        <div className="relative h-[420px] md:h-[470px]">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.15, duration: 0.3 }}
-            className="absolute right-8 top-7 md:right-10 md:top-9"
-          >
-            <span className="text-[18px] md:text-[22px] font-semibold tracking-wide" style={{ color: NEON }}>
-              {tab.number}
-            </span>
-          </motion.div>
-
-          <div className="h-full px-6 md:px-10 pt-8 md:pt-10 pb-10">
-            <motion.div
-              key={tab.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -5 }}
-              transition={{ delay: 0.1, duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-            >
-              <h3 className="text-[30px] md:text-[38px] leading-[1.05] font-medium" style={{ color: NEON }}>
-                {tab.title}
-              </h3>
-
-              <p className="mt-4 md:mt-6 max-w-[560px] text-[13px] md:text-[16px] leading-[1.55]" style={{ color: NEON_48 }}>
-                {tab.desc}
-              </p>
-
-              {!!tab.bullets?.length && (
-                <ul className="mt-10 md:mt-20 space-y-3">
-                  {tab.bullets.map((b, idx) => (
-                    <motion.li
-                      key={b}
-                      initial={{ opacity: 0, x: -15 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{
-                        delay: 0.2 + idx * 0.06,
-                        duration: 0.3,
-                        ease: [0.25, 0.1, 0.25, 1],
-                      }}
-                      className="flex items-center gap-3"
-                    >
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        style={{ color: NEON }}
-                      >
-                        <path
-                          d="M9 18L15 12L9 6"
-                          stroke="currentColor"
-                          strokeWidth="2.4"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-
-                      <span className="text-[13px] md:text-[14px] font-medium" style={{ color: NEON }}>
-                        {b}
-                      </span>
-                    </motion.li>
-                  ))}
-                </ul>
-              )}
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 0.95, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.4 }}
-              className="pointer-events-none absolute bottom-7 right-7 md:bottom-10 md:right-10"
-            >
-              <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-                className="h-[120px] w-[180px] md:h-[140px] md:w-[220px]"
-              >
-                {bigIcon ?? null}
-              </motion.div>
-            </motion.div>
-          </div>
-        </div>
+      <div className="absolute right-8 top-7 md:right-10 md:top-9">
+        <span className="text-[18px] md:text-[22px] font-semibold tracking-wide" style={{ color: NEON }}>
+          {tab.number}
+        </span>
       </div>
-    </motion.div>
+
+      <div className="h-full px-6 md:px-10 pt-8 md:pt-10 pb-10">
+        <h3 className="text-[30px] md:text-[38px] leading-[1.05] font-medium" style={{ color: NEON }}>
+          {tab.title}
+        </h3>
+
+        <p className="mt-4 md:mt-6 max-w-[560px] text-[13px] md:text-[16px] leading-[1.55]" style={{ color: NEON_48 }}>
+          {tab.desc}
+        </p>
+
+        {!!tab.bullets?.length && (
+          <ul className="mt-10 md:mt-16 space-y-3">
+            {tab.bullets.map((b) => (
+              <li key={b} className="flex items-center gap-3">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ color: NEON }}>
+                  <path
+                    d="M9 18L15 12L9 6"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className="text-[13px] md:text-[14px] font-medium" style={{ color: NEON }}>
+                  {b}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {bigIcon && (
+          <div className="pointer-events-none absolute bottom-7 right-7 md:bottom-10 md:right-10 h-[120px] w-[180px] md:h-[140px] md:w-[220px] opacity-90">
+            {bigIcon}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 

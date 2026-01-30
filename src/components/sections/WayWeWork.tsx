@@ -438,7 +438,7 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
                       flex: isActive ? "1 1 0%" : "0 0 78px",
                     }}
                     transition={columnTransition}
-                    className="relative"
+                    className="relative h-[470px]"
                   >
                     <AnimatePresence mode="wait">
                       {isActive ? (

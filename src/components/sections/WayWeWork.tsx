@@ -466,6 +466,21 @@ function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) 
           "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.00) 55%, rgba(0,0,0,0.06) 100%)",
       }}
     >
+      {/* Pulsing border glow */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none rounded-[14px]"
+        style={{
+          boxShadow: `0 0 0 1px ${NEON_48}`,
+        }}
+        animate={{
+          boxShadow: [
+            `0 0 0 1px ${NEON_48}`,
+            `0 0 20px 2px ${NEON_22}`,
+            `0 0 0 1px ${NEON_48}`,
+          ],
+        }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+      />
       <div className="relative h-[420px] md:h-[470px]">
         <div className="absolute right-8 top-7 md:right-10 md:top-9">
           <span className="text-[18px] md:text-[22px] font-semibold tracking-wide" style={{ color: NEON }}>

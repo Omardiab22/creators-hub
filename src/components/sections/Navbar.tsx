@@ -150,16 +150,16 @@ export default function Navbar() {
             </div>
 
             {/* CENTER: Links (Desktop only) */}
-            <div className="hidden lg:flex items-center gap-10">
+            <div className="hidden lg:flex items-center gap-12">
               {navLinks.map((l) => (
                 <Link
                   key={l.href}
                   href={l.href}
                   className="
                     group relative
-                    text-[12px] font-medium tracking-[0.12em]
-                    text-white/90
-                    transition-colors duration-200
+                    text-[12px] font-semibold tracking-[0.12em]
+                    text-white/85
+                    transition-all duration-300
                     hover:text-white
                   "
                 >
@@ -168,12 +168,12 @@ export default function Navbar() {
                     aria-hidden="true"
                     className="
                       pointer-events-none
-                      absolute left-0 -bottom-[7px]
-                      h-[2px] w-full
+                      absolute left-0 -bottom-[8px]
+                      h-[2.5px] w-full
                       origin-left
                       scale-x-0
                       rounded-full
-                      bg-[#EDE7DF]
+                      bg-gradient-to-r from-[#00FFB6] to-[#00D4A6]
                       transition-transform duration-300 ease-out
                       group-hover:scale-x-100
                     "

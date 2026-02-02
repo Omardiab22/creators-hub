@@ -126,15 +126,19 @@ export default function Navbar() {
               relative
               h-[72px]
               w-full
-              rounded-[14px]
-              bg-[#151A43]
+              rounded-[16px]
               px-4 sm:px-6
               flex
               items-center
               justify-between
               will-change-transform
-              shadow-[0_16px_40px_rgba(0,0,0,0.22)]
+              backdrop-blur-xl
+              border border-white/10
+              shadow-[0_8px_32px_rgba(0,255,182,0.08)]
             "
+            style={{
+              background: "linear-gradient(135deg, rgba(21,26,67,0.85) 0%, rgba(21,26,67,0.75) 100%)",
+            }}
           >
             {/* LEFT: Logo */}
             <div className="flex items-center min-w-[140px]">

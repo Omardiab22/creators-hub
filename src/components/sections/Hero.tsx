@@ -256,7 +256,7 @@ export default function Hero() {
                   transition={{ delay: 0.2, type: "spring", stiffness: 140, damping: 18 }}
                   className="mt-5 sm:mt-6 max-w-[560px] text-[14px] sm:text-[18px] leading-[1.6] font-medium text-[#151A43]/85 px-2"
                 >
-                  Creators Hub is a professional, trustworthy platform for content creators.
+                  A full-service creative agency delivering professional video editing, social media management, stunning design, and content creation for brands and businesses of all sizes.
                 </motion.p>
 
                 <motion.div

@@ -230,11 +230,15 @@ export default function Navbar() {
                     w-[140px]
                     overflow-hidden
                     rounded-[12px]
-                    bg-[#EDE7DF]
-                    shadow-lg
+                    backdrop-blur-xl
+                    border border-white/15
+                    shadow-[0_8px_32px_rgba(0,0,0,0.3)]
                     transition-all duration-150
                     ${langOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1 pointer-events-none"}
                   `}
+                  style={{
+                    background: "linear-gradient(135deg, rgba(21,26,67,0.9) 0%, rgba(21,26,67,0.8) 100%)",
+                  }}
                   role="menu"
                   aria-label="Language menu"
                 >
@@ -246,17 +250,18 @@ export default function Navbar() {
                       px-4 py-3
                       flex items-center justify-between
                       text-[13px] font-medium
-                      text-[#111327]
-                      hover:bg-black/5
+                      text-white/85
+                      hover:text-white
+                      hover:bg-white/5
                       transition
                     "
                     role="menuitem"
                   >
                     <span>English</span>
-                    {lang === "EN" ? <FiCheck className="text-[16px]" /> : <span className="w-[16px]" />}
+                    {lang === "EN" ? <FiCheck className="text-[16px] text-[#00FFB6]" /> : <span className="w-[16px]" />}
                   </button>
 
-                  <div className="h-px w-full bg-black/10" />
+                  <div className="h-px w-full bg-white/5" />
 
                   <button
                     type="button"
@@ -266,14 +271,15 @@ export default function Navbar() {
                       px-4 py-3
                       flex items-center justify-between
                       text-[13px] font-medium
-                      text-[#111327]
-                      hover:bg-black/5
+                      text-white/85
+                      hover:text-white
+                      hover:bg-white/5
                       transition
                     "
                     role="menuitem"
                   >
                     <span>العربية</span>
-                    {lang === "AR" ? <FiCheck className="text-[16px]" /> : <span className="w-[16px]" />}
+                    {lang === "AR" ? <FiCheck className="text-[16px] text-[#00FFB6]" /> : <span className="w-[16px]" />}
                   </button>
                 </div>
               </div>

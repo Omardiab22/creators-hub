@@ -325,15 +325,15 @@ export default function Navbar() {
                     h-[44px]
                     w-[44px]
                     rounded-[10px]
-                    bg-[#EDE7DF]
                     flex
                     items-center
                     justify-center
-                    text-[#111327]
-                    ring-1 ring-black/10
-                    transition
-                    hover:ring-black/20
-                    hover:shadow-[0_10px_20px_rgba(0,0,0,0.18)]
+                    text-white
+                    border border-[#00FFB6]/40
+                    transition-all duration-300
+                    hover:border-[#00FFB6]/80
+                    hover:bg-[#00FFB6]/10
+                    hover:shadow-[0_0_20px_rgba(0,255,182,0.25)]
                   "
                   aria-label="Contact us"
                   onClick={() => setMenuOpen(false)}

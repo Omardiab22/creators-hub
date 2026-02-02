@@ -198,22 +198,22 @@ export default function Navbar() {
                   className="
                     h-[44px]
                     rounded-[10px]
-                    bg-[#EDE7DF]
                     px-4
                     flex
                     items-center
                     gap-2
                     text-[13px]
-                    font-medium
-                    text-[#111327]
+                    font-semibold
+                    text-white/90
                     cursor-pointer
-                    ring-1 ring-black/10
-                    transition
-                    hover:ring-black/20
-                    hover:shadow-[0_10px_20px_rgba(0,0,0,0.18)]
+                    border border-white/15
+                    transition-all duration-300
+                    hover:border-white/30
+                    hover:bg-white/5
+                    hover:text-white
                     focus-visible:outline-none
                     focus-visible:ring-2
-                    focus-visible:ring-white/70
+                    focus-visible:ring-[#00FFB6]/50
                   "
                   aria-label="Change language"
                   aria-expanded={langOpen}

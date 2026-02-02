@@ -128,27 +128,6 @@ export default function Hero() {
                 />
               </motion.div>
 
-              {/* TOP RIGHT (WIFI) */}
-              <motion.div
-                className="absolute right-[10px] sm:right-[80px] top-[110px] sm:top-[110px] will-change-transform"
-                style={{
-                  width: "clamp(74px, 18vw, 120px)",
-                  height: "clamp(74px, 18vw, 120px)",
-                }}
-                initial={popIn(0.2).initial}
-                animate={popIn(0.2).animate}
-                transition={popIn(0.2).transition}
-              >
-                <motion.img
-                  src="/hero/svg/wifi.svg"
-                  alt=""
-                  draggable={false}
-                  className="h-full w-full select-none"
-                  animate={{ scale: [1, 1.09, 1], y: [0, -6, 0] }}
-                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                />
-              </motion.div>
-
               {/* BOTTOM LEFT (ROCKET) */}
               <motion.div
                 className="absolute left-[-10px] sm:left-[40px] bottom-[50px] sm:bottom-[70px] will-change-transform"

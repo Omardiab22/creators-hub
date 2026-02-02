@@ -352,14 +352,16 @@ export default function Navbar() {
                   h-[44px]
                   w-[44px]
                   rounded-[10px]
-                  bg-white/10
+                  border border-white/15
                   flex
                   items-center
                   justify-center
-                  text-white
+                  text-white/85
                   cursor-pointer
-                  transition
-                  hover:bg-white/15
+                  transition-all duration-300
+                  hover:border-white/30
+                  hover:bg-white/5
+                  hover:text-white
                 "
                 aria-label={menuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={menuOpen}

@@ -381,11 +381,14 @@ export default function Navbar() {
             {menuOpen && (
               <motion.div
                 id="mobile-nav"
-                className="lg:hidden mt-3 w-full overflow-hidden rounded-[14px] bg-[#151A43] px-6 shadow-[0_24px_70px_rgba(0,0,0,0.35)]"
+                className="lg:hidden mt-3 w-full overflow-hidden rounded-[14px] px-6 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,255,182,0.08)]"
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                style={{
+                  background: "linear-gradient(135deg, rgba(21,26,67,0.85) 0%, rgba(21,26,67,0.75) 100%)",
+                }}
               >
                 <div className="py-4 flex flex-col gap-3">
                   {navLinks.map((l) => (
@@ -396,8 +399,8 @@ export default function Navbar() {
                       className="
                         relative
                         py-2
-                        text-[12px] font-medium tracking-[0.12em] text-white/90
-                        transition-colors
+                        text-[12px] font-semibold tracking-[0.12em] text-white/85
+                        transition-colors duration-200
                         hover:text-white
                       "
                     >

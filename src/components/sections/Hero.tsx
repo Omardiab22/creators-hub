@@ -128,27 +128,6 @@ export default function Hero() {
                 />
               </motion.div>
 
-              {/* TOP RIGHT (WIFI) */}
-              <motion.div
-                className="absolute right-[10px] sm:right-[80px] top-[110px] sm:top-[110px] will-change-transform"
-                style={{
-                  width: "clamp(74px, 18vw, 120px)",
-                  height: "clamp(74px, 18vw, 120px)",
-                }}
-                initial={popIn(0.2).initial}
-                animate={popIn(0.2).animate}
-                transition={popIn(0.2).transition}
-              >
-                <motion.img
-                  src="/hero/svg/wifi.svg"
-                  alt=""
-                  draggable={false}
-                  className="h-full w-full select-none"
-                  animate={{ scale: [1, 1.09, 1], y: [0, -6, 0] }}
-                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                />
-              </motion.div>
-
               {/* BOTTOM LEFT (ROCKET) */}
               <motion.div
                 className="absolute left-[-10px] sm:left-[40px] bottom-[50px] sm:bottom-[70px] will-change-transform"
@@ -241,12 +220,12 @@ export default function Hero() {
                   className="max-w-[980px] text-[#151A43]"
                 >
                   <span className="block text-[34px] sm:text-[52px] md:text-[66px] leading-[1.02] tracking-[-0.01em]">
-                    <span className="font-head">CREATORS HUB - </span>
-                    <span className="font-bold">WHERE</span>
+                    <span className="font-head">YOUR CREATIVE </span>
+                    <span className="font-bold">VISION,</span>
                   </span>
 
                   <span className="block text-[34px] sm:text-[52px] md:text-[66px] leading-[1.02] tracking-[-0.01em] font-bold">
-                    IDEAS FIND THEIR VOICE
+                    BROUGHT TO LIFE
                   </span>
                 </motion.h1>
 
@@ -256,7 +235,7 @@ export default function Hero() {
                   transition={{ delay: 0.2, type: "spring", stiffness: 140, damping: 18 }}
                   className="mt-5 sm:mt-6 max-w-[560px] text-[14px] sm:text-[18px] leading-[1.6] font-medium text-[#151A43]/85 px-2"
                 >
-                  Creators Hub is a professional, trustworthy platform for content creators.
+                  A full-service creative agency delivering professional video editing, social media management, stunning design, and content creation for brands and businesses of all sizes.
                 </motion.p>
 
                 <motion.div

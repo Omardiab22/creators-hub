@@ -85,13 +85,18 @@ export default function Navbar() {
               w-full
               rounded-[14px]
               bg-[#151A43]
-              px-3 xs:px-4 sm:px-6
+              px-4 sm:px-6
               flex
               items-center
               justify-between
               will-change-transform
-              shadow-[0_16px_40px_rgba(0,0,0,0.22)]
+              backdrop-blur-xl
+              border border-white/10
+              shadow-[0_8px_32px_rgba(0,255,182,0.08)]
             "
+            style={{
+              background: "linear-gradient(135deg, rgba(21,26,67,0.85) 0%, rgba(21,26,67,0.75) 100%)",
+            }}
           >
             {/* LEFT: Logo */}
             <div className="flex items-center min-w-0">
@@ -111,16 +116,16 @@ export default function Navbar() {
             </div>
 
             {/* CENTER: Links (Desktop only) */}
-            <div className="hidden lg:flex items-center gap-10">
+            <div className="hidden lg:flex items-center gap-12">
               {navLinks.map((l) => (
                 <Link
                   key={l.href}
                   href={l.href}
                   className="
                     group relative
-                    text-[12px] font-medium tracking-[0.12em]
-                    text-white/90
-                    transition-colors duration-200
+                    text-[12px] font-semibold tracking-[0.12em]
+                    text-white/85
+                    transition-all duration-300
                     hover:text-white
                   "
                 >
@@ -129,12 +134,12 @@ export default function Navbar() {
                     aria-hidden="true"
                     className="
                       pointer-events-none
-                      absolute left-0 -bottom-[7px]
-                      h-[2px] w-full
+                      absolute left-0 -bottom-[8px]
+                      h-[2.5px] w-full
                       origin-left
                       scale-x-0
                       rounded-full
-                      bg-[#EDE7DF]
+                      bg-gradient-to-r from-[#00FFB6] to-[#00D4A6]
                       transition-transform duration-300 ease-out
                       group-hover:scale-x-100
                     "
@@ -144,7 +149,101 @@ export default function Navbar() {
             </div>
 
             {/* RIGHT: Actions */}
-            <div className="flex items-center gap-2 xs:gap-3 shrink-0">
+            <div className="flex items-center gap-3">
+              {/* Language */}
+              <div className="relative">
+                <motion.button
+                  type="button"
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ duration: 0.18 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => {
+                    setLangOpen((v) => !v);
+                    if (!langOpen) setMenuOpen(false);
+                  }}
+                  className="
+                    h-[44px]
+                    rounded-[10px]
+                    bg-[#EDE7DF]
+                    px-4
+                    flex
+                    items-center
+                    gap-2
+                    text-[13px]
+                    font-medium
+                    text-[#111327]
+                    cursor-pointer
+                    ring-1 ring-black/10
+                    transition
+                    hover:ring-black/20
+                    hover:shadow-[0_10px_20px_rgba(0,0,0,0.18)]
+                    focus-visible:outline-none
+                    focus-visible:ring-2
+                    focus-visible:ring-white/70
+                  "
+                  aria-label="Change language"
+                  aria-expanded={langOpen}
+                  aria-haspopup="menu"
+                >
+                  <FiGlobe className="text-[16px]" />
+                  <span className="hidden sm:inline">{lang}</span>
+                </motion.button>
+
+                {/* Language dropdown */}
+                <div
+                  className={`
+                    absolute right-0 top-[52px] z-[10000]
+                    w-[140px]
+                    overflow-hidden
+                    rounded-[12px]
+                    bg-[#EDE7DF]
+                    shadow-lg
+                    transition-all duration-150
+                    ${langOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1 pointer-events-none"}
+                  `}
+                  role="menu"
+                  aria-label="Language menu"
+                >
+                  <button
+                    type="button"
+                    onClick={() => handleLangSelect("EN")}
+                    className="
+                      w-full
+                      px-4 py-3
+                      flex items-center justify-between
+                      text-[13px] font-medium
+                      text-[#111327]
+                      hover:bg-black/5
+                      transition
+                    "
+                    role="menuitem"
+                  >
+                    <span>English</span>
+                    {lang === "EN" ? <FiCheck className="text-[16px]" /> : <span className="w-[16px]" />}
+                  </button>
+
+                  <div className="h-px w-full bg-black/10" />
+
+                  <button
+                    type="button"
+                    onClick={() => handleLangSelect("AR")}
+                    className="
+                      w-full
+                      px-4 py-3
+                      flex items-center justify-between
+                      text-[13px] font-medium
+                      text-[#111327]
+                      hover:bg-black/5
+                      transition
+                    "
+                    role="menuitem"
+                  >
+                    <span>العربية</span>
+                    {lang === "AR" ? <FiCheck className="text-[16px]" /> : <span className="w-[16px]" />}
+                  </button>
+                </div>
+              </div>
+
               {/* Contact (Desktop + Tablet) */}
               <motion.div whileHover={{ scale: 1.03 }} transition={{ duration: 0.18 }} whileTap={{ scale: 0.97 }}>
                 <Link
@@ -153,17 +252,17 @@ export default function Navbar() {
                     hidden sm:flex
                     h-[44px]
                     rounded-[10px]
-                    bg-[#EDE7DF]
                     px-5
                     items-center
                     gap-3
                     text-[13px]
                     font-semibold
-                    text-[#111327]
-                    ring-1 ring-black/10
-                    transition
-                    hover:ring-black/20
-                    hover:shadow-[0_10px_20px_rgba(0,0,0,0.18)]
+                    text-white
+                    border border-[#00FFB6]/40
+                    transition-all duration-300
+                    hover:border-[#00FFB6]/80
+                    hover:bg-[#00FFB6]/10
+                    hover:shadow-[0_0_20px_rgba(0,255,182,0.25)]
                   "
                   aria-label="Contact us"
                   onClick={() => setMenuOpen(false)}
@@ -181,15 +280,15 @@ export default function Navbar() {
                     h-[44px]
                     w-[44px]
                     rounded-[10px]
-                    bg-[#EDE7DF]
                     flex
                     items-center
                     justify-center
-                    text-[#111327]
-                    ring-1 ring-black/10
-                    transition
-                    hover:ring-black/20
-                    hover:shadow-[0_10px_20px_rgba(0,0,0,0.18)]
+                    text-white
+                    border border-[#00FFB6]/40
+                    transition-all duration-300
+                    hover:border-[#00FFB6]/80
+                    hover:bg-[#00FFB6]/10
+                    hover:shadow-[0_0_20px_rgba(0,255,182,0.25)]
                   "
                   aria-label="Contact us"
                   onClick={() => setMenuOpen(false)}
@@ -208,14 +307,16 @@ export default function Navbar() {
                   h-[44px]
                   w-[44px]
                   rounded-[10px]
-                  bg-white/10
+                  border border-white/15
                   flex
                   items-center
                   justify-center
-                  text-white
+                  text-white/85
                   cursor-pointer
-                  transition
-                  hover:bg-white/15
+                  transition-all duration-300
+                  hover:border-white/30
+                  hover:bg-white/5
+                  hover:text-white
                 "
                 aria-label={menuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={menuOpen}
@@ -232,11 +333,14 @@ export default function Navbar() {
             {menuOpen && (
               <motion.div
                 id="mobile-nav"
-                className="lg:hidden mt-3 w-full overflow-hidden rounded-[14px] bg-[#151A43] px-5 sm:px-6 shadow-[0_24px_70px_rgba(0,0,0,0.35)]"
+                className="lg:hidden mt-3 w-full overflow-hidden rounded-[14px] bg-[#151A43] px-6 shadow-[0_24px_70px_rgba(0,0,0,0.35)]"
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                style={{
+                  background: "linear-gradient(135deg, rgba(21,26,67,0.85) 0%, rgba(21,26,67,0.75) 100%)",
+                }}
               >
                 <div className="py-4 flex flex-col gap-3">
                   {navLinks.map((l) => (
@@ -247,8 +351,8 @@ export default function Navbar() {
                       className="
                         relative
                         py-2
-                        text-[12px] font-medium tracking-[0.12em] text-white/90
-                        transition-colors
+                        text-[12px] font-semibold tracking-[0.12em] text-white/85
+                        transition-colors duration-200
                         hover:text-white
                       "
                     >

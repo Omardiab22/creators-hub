@@ -83,9 +83,14 @@ export default function Navbar() {
               relative
               h-[72px]
               w-full
+<<<<<<< HEAD
               rounded-[14px]
               bg-[#151A43]
+              px-3 xs:px-4 sm:px-6
+=======
+              rounded-[16px]
               px-4 sm:px-6
+>>>>>>> bee8bae8c2fd89d2280de313081586fb8150b965
               flex
               items-center
               justify-between
@@ -149,101 +154,7 @@ export default function Navbar() {
             </div>
 
             {/* RIGHT: Actions */}
-            <div className="flex items-center gap-3">
-              {/* Language */}
-              <div className="relative">
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.03 }}
-                  transition={{ duration: 0.18 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => {
-                    setLangOpen((v) => !v);
-                    if (!langOpen) setMenuOpen(false);
-                  }}
-                  className="
-                    h-[44px]
-                    rounded-[10px]
-                    bg-[#EDE7DF]
-                    px-4
-                    flex
-                    items-center
-                    gap-2
-                    text-[13px]
-                    font-medium
-                    text-[#111327]
-                    cursor-pointer
-                    ring-1 ring-black/10
-                    transition
-                    hover:ring-black/20
-                    hover:shadow-[0_10px_20px_rgba(0,0,0,0.18)]
-                    focus-visible:outline-none
-                    focus-visible:ring-2
-                    focus-visible:ring-white/70
-                  "
-                  aria-label="Change language"
-                  aria-expanded={langOpen}
-                  aria-haspopup="menu"
-                >
-                  <FiGlobe className="text-[16px]" />
-                  <span className="hidden sm:inline">{lang}</span>
-                </motion.button>
-
-                {/* Language dropdown */}
-                <div
-                  className={`
-                    absolute right-0 top-[52px] z-[10000]
-                    w-[140px]
-                    overflow-hidden
-                    rounded-[12px]
-                    bg-[#EDE7DF]
-                    shadow-lg
-                    transition-all duration-150
-                    ${langOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1 pointer-events-none"}
-                  `}
-                  role="menu"
-                  aria-label="Language menu"
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleLangSelect("EN")}
-                    className="
-                      w-full
-                      px-4 py-3
-                      flex items-center justify-between
-                      text-[13px] font-medium
-                      text-[#111327]
-                      hover:bg-black/5
-                      transition
-                    "
-                    role="menuitem"
-                  >
-                    <span>English</span>
-                    {lang === "EN" ? <FiCheck className="text-[16px]" /> : <span className="w-[16px]" />}
-                  </button>
-
-                  <div className="h-px w-full bg-black/10" />
-
-                  <button
-                    type="button"
-                    onClick={() => handleLangSelect("AR")}
-                    className="
-                      w-full
-                      px-4 py-3
-                      flex items-center justify-between
-                      text-[13px] font-medium
-                      text-[#111327]
-                      hover:bg-black/5
-                      transition
-                    "
-                    role="menuitem"
-                  >
-                    <span>العربية</span>
-                    {lang === "AR" ? <FiCheck className="text-[16px]" /> : <span className="w-[16px]" />}
-                  </button>
-                </div>
-              </div>
-
+            <div className="flex items-center gap-2 xs:gap-3 shrink-0">
               {/* Contact (Desktop + Tablet) */}
               <motion.div whileHover={{ scale: 1.03 }} transition={{ duration: 0.18 }} whileTap={{ scale: 0.97 }}>
                 <Link
@@ -333,7 +244,8 @@ export default function Navbar() {
             {menuOpen && (
               <motion.div
                 id="mobile-nav"
-                className="lg:hidden mt-3 w-full overflow-hidden rounded-[14px] bg-[#151A43] px-6 shadow-[0_24px_70px_rgba(0,0,0,0.35)]"
+
+                className="lg:hidden mt-3 w-full overflow-hidden rounded-[14px] px-6 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,255,182,0.08)]"
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}

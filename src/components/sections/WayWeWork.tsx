@@ -276,40 +276,48 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
         number: "01",
         label: "Content Creation",
         title: "Content Creation",
-        desc: "Our content creation process is a comprehensive, end-to-end engine designed to transform raw ideas into high-performing digital assets.",
-        bullets: ["Custom Design & Visuals", "Social Media Management", "Growth & Strategy", "Analytics & Reporting"],
+        desc: "Our content creation process is a comprehensive, end-to-end engine designed to transform raw ideas into high-performing digital assets that resonate with your audience.",
+        bullets: ["Professional Video Production", "Custom Graphics & Animation", "Copywriting & Storytelling", "Brand Voice Development"],
       },
-      { id: "t2", number: "02", label: "Design", title: "Design", desc: "", bullets: [] },
-      { id: "t3", number: "03", label: "Social Media Management", title: "Social Media Management", desc: "", bullets: [] },
-      { id: "t4", number: "04", label: "Growth & Strategy", title: "Growth & Strategy", desc: "", bullets: [] },
-      { id: "t5", number: "05", label: "Analytics & Reporting", title: "Analytics & Reporting", desc: "", bullets: [] },
+      {
+        id: "t2",
+        number: "02",
+        label: "Design",
+        title: "Design Excellence",
+        desc: "We craft stunning visual identities and user experiences that elevate your brand. From logos to complete design systems, every pixel is purposefully placed.",
+        bullets: ["Brand Identity & Logo Design", "UI/UX Design", "Marketing Materials", "Web & Mobile Design"],
+      },
+      {
+        id: "t3",
+        number: "03",
+        label: "Social Media",
+        title: "Social Media Management",
+        desc: "Strategic social media management that builds communities, drives engagement, and converts followers into loyal customers across all major platforms.",
+        bullets: ["Platform Strategy & Planning", "Content Calendar Management", "Community Engagement", "Influencer Collaboration"],
+      },
+      {
+        id: "t4",
+        number: "04",
+        label: "Growth",
+        title: "Growth & Strategy",
+        desc: "Data-driven growth strategies tailored to your business goals. We identify opportunities, optimize channels, and scale what works to maximize your ROI.",
+        bullets: ["Market Research & Analysis", "Audience Targeting", "Campaign Optimization", "Conversion Rate Optimization"],
+      },
+      {
+        id: "t5",
+        number: "05",
+        label: "Analytics",
+        title: "Analytics & Reporting",
+        desc: "Comprehensive analytics and transparent reporting that give you complete visibility into your campaign performance and business growth metrics.",
+        bullets: ["Performance Dashboards", "Custom Reports & Insights", "ROI Tracking", "Competitor Analysis"],
+      },
     ],
     []
   );
 
   const [activeId, setActiveId] = useState<string>(tabs[0].id);
-
-  // ✅ active index
   const activeIndex = useMemo(() => tabs.findIndex((t) => t.id === activeId), [tabs, activeId]);
-
-  // ✅ grid columns: active = 1fr, others = 78px
-  const gridCols = useMemo(
-    () => tabs.map((t) => (t.id === activeId ? "minmax(0, 1fr)" : "78px")).join(" "),
-    [tabs, activeId]
-  );
-
   const activeTab = tabs[activeIndex] ?? tabs[0];
-
-  // ✅ Smooth slower transition config (shared)
-  const smoothLayout = useMemo(
-    () => ({
-      type: "spring" as const,
-      stiffness: 220,
-      damping: 32,
-      mass: 1.15,
-    }),
-    []
-  );
 
   return (
     <section id="how-we-help" className={`relative w-full ${className}`} style={{ background: NAVY }}>
@@ -337,7 +345,20 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
         <div className="mt-8 sm:mt-10">
           {/* Mobile */}
           <div className="md:hidden">
-            <ActivePanel key={activeTab.id} tab={activeTab} bigIcon={bigIcon} />
+            <div className="relative h-[470px]">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={activeTab.id}
+                  initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
+                  transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute inset-0"
+                >
+                  <ActivePanel tab={activeTab} bigIcon={bigIcon} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
             <div className="mt-5 flex gap-3 overflow-x-auto pb-2">
               {tabs.map((t) => {
@@ -347,14 +368,11 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
                     key={t.id}
                     type="button"
                     onClick={() => setActiveId(t.id)}
-                    className={[
-                      "shrink-0 rounded-full px-4 py-2 text-[12px] font-semibold",
-                      "border transition",
-                      isActive ? "text-[#081B17]" : "text-white/80",
-                    ].join(" ")}
+                    className="shrink-0 rounded-full px-4 py-2 text-[12px] font-semibold border transition-all duration-300"
                     style={{
                       borderColor: isActive ? NEON : NEON_22,
                       backgroundColor: isActive ? NEON : "rgba(255,255,255,0.04)",
+                      color: isActive ? "#081B17" : "rgba(255,255,255,0.8)",
                     }}
                   >
                     {t.number} • {t.label}
@@ -366,26 +384,48 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
 
           {/* Desktop */}
           <div className="hidden md:block">
-            <motion.div
-              layout
-              className="grid gap-6"
-              style={{ gridTemplateColumns: gridCols }}
-              transition={{ layout: smoothLayout }} // ✅ أبطأ + سموز
-            >
+            <div className="flex gap-4 h-[470px]">
               {tabs.map((t) => {
                 const isActive = t.id === activeId;
 
                 return (
-                  <motion.div key={t.id} layout transition={smoothLayout}>
-                    {isActive ? (
-                      <ActivePanel key={t.id} tab={t} bigIcon={bigIcon} />
-                    ) : (
-                      <ClosedColumn tab={t} onClick={() => setActiveId(t.id)} />
-                    )}
-                  </motion.div>
+                  <div
+                    key={t.id}
+                    className="relative h-full transition-all duration-500 ease-out"
+                    style={{
+                      flex: isActive ? "1 1 0%" : "0 0 78px",
+                      minWidth: isActive ? "0" : "78px",
+                    }}
+                  >
+                    <AnimatePresence mode="wait" initial={false}>
+                      {isActive ? (
+                        <motion.div
+                          key={`${t.id}-active`}
+                          initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
+                          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                          exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
+                          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                          className="absolute inset-0"
+                        >
+                          <ActivePanel tab={t} bigIcon={bigIcon} />
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key={`${t.id}-closed`}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                          className="absolute inset-0"
+                        >
+                          <ClosedColumn tab={t} onClick={() => setActiveId(t.id)} />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 );
               })}
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>
@@ -399,11 +439,9 @@ function HowWeHelp({ bigIcon, className = "" }: HowWeHelpProps) {
 
 function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) {
   return (
-    <motion.div
-      layout
-      className="relative overflow-hidden"
+    <div
+      className="relative overflow-hidden h-full w-full rounded-[14px]"
       style={{
-        borderRadius: 14,
         border: `1px solid ${NEON_48}`,
         background:
           "radial-gradient(900px 520px at 40% 28%, rgba(0,255,182,0.09) 0%, rgba(0,0,0,0) 62%)," +
@@ -411,111 +449,111 @@ function ActivePanel({ tab, bigIcon }: { tab: Tab; bigIcon?: React.ReactNode }) 
           "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.00) 55%, rgba(0,0,0,0.06) 100%)",
       }}
     >
-      <div className="relative h-[420px] md:h-[470px]">
-        <div className="absolute right-8 top-7 md:right-10 md:top-9">
-          <span className="text-[18px] md:text-[22px] font-semibold tracking-wide" style={{ color: NEON }}>
-            {tab.number}
-          </span>
-        </div>
-
-        <div className="h-full px-6 md:px-10 pt-8 md:pt-10 pb-10">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={tab.id}
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }} // ✅ أهدى
-              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }} // ✅ smoother + slower
-            >
-              <h3 className="text-[30px] md:text-[38px] leading-[1.05] font-medium" style={{ color: NEON }}>
-                {tab.title}
-              </h3>
-
-              <p className="mt-4 md:mt-6 max-w-[560px] text-[13px] md:text-[16px] leading-[1.55]" style={{ color: NEON_48 }}>
-                {tab.desc}
-              </p>
-
-              {!!tab.bullets?.length && (
-                <ul className="mt-10 md:mt-20 space-y-3">
-                  {tab.bullets.map((b) => (
-                    <li key={b} className="flex items-center gap-3">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ color: NEON }}>
-                        <path
-                          d="M9 18L15 12L9 6"
-                          stroke="currentColor"
-                          strokeWidth="2.4"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-
-                      <span className="text-[13px] md:text-[14px] font-medium" style={{ color: NEON }}>
-                        {b}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </motion.div>
-          </AnimatePresence>
-
-          <div className="pointer-events-none absolute bottom-7 right-7 md:bottom-10 md:right-10">
-            <div className="h-[120px] w-[180px] md:h-[140px] md:w-[220px] opacity-95">
-              {bigIcon ?? null}
-            </div>
-          </div>
-        </div>
+      {/* Premium subtle sweep */}
+      <motion.div
+        aria-hidden="true"
+        className="absolute -inset-[60px] pointer-events-none opacity-[0.06]"
+        style={{
+          background: "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,255,182,0.75) 50%, rgba(0,0,0,0) 100%)",
+          transform: "rotate(12deg)",
+        }}
+        animate={{ x: [-40, 40] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <div className="absolute right-8 top-7 md:right-10 md:top-9">
+        <span className="text-[18px] md:text-[22px] font-semibold tracking-wide" style={{ color: NEON }}>
+          {tab.number}
+        </span>
       </div>
-    </motion.div>
+
+      <div className="h-full px-6 md:px-10 pt-8 md:pt-10 pb-10">
+        <h3 className="text-[30px] md:text-[38px] leading-[1.05] font-medium" style={{ color: NEON }}>
+          {tab.title}
+        </h3>
+
+        <p className="mt-4 md:mt-6 max-w-[560px] text-[13px] md:text-[16px] leading-[1.55]" style={{ color: NEON_48 }}>
+          {tab.desc}
+        </p>
+
+        {!!tab.bullets?.length && (
+          <ul className="mt-10 md:mt-16 space-y-3">
+            {tab.bullets.map((b) => (
+              <li key={b} className="flex items-center gap-3">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ color: NEON }}>
+                  <path
+                    d="M9 18L15 12L9 6"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className="text-[13px] md:text-[14px] font-medium" style={{ color: NEON }}>
+                  {b}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {bigIcon && (
+          <div className="pointer-events-none absolute bottom-7 right-7 md:bottom-10 md:right-10 h-[120px] w-[180px] md:h-[140px] md:w-[220px] opacity-90">
+            {bigIcon}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
 /* =========================
-   Closed Column (Centered Title)
+   Closed Column
 ========================= */
 
 function ClosedColumn({ tab, onClick }: { tab: Tab; onClick: () => void }) {
   return (
-    <motion.button
-      layout
+    <button
       type="button"
       onClick={onClick}
-      className="relative w-[78px] overflow-hidden"
+      className="group relative w-full h-full overflow-hidden rounded-[14px] cursor-pointer transition-all duration-300 hover:scale-[1.02]"
       style={{
-        height: 470,
-        borderRadius: 14,
         border: `1px solid ${NEON_22}`,
         background:
           "radial-gradient(260px 520px at 50% 20%, rgba(0,255,182,0.06) 0%, rgba(0,0,0,0) 60%)," +
           "linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.00) 70%)",
       }}
-      whileHover={{ scale: 1.008 }}
-      transition={{
-        type: "spring",
-        stiffness: 240,
-        damping: 30,
-        mass: 1.05,
-      }}
     >
-      <div className="absolute left-1/2 -translate-x-1/2 top-8">
-        <span className="text-[18px] md:text-[22px] font-semibold tracking-wide" style={{ color: NEON_48 }}>
+      {/* Hover glow */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-40 transition-opacity duration-300 rounded-[14px]"
+        style={{
+          background: `radial-gradient(circle at center, ${NEON_22} 0%, transparent 70%)`,
+        }}
+      />
+
+      {/* Number at top */}
+      <div className="absolute left-1/2 -translate-x-1/2 top-8 transition-all duration-300 group-hover:-translate-y-1">
+        <span
+          className="text-[18px] md:text-[22px] font-semibold tracking-wide transition-colors duration-300 group-hover:text-[#00FFB6]"
+          style={{ color: NEON_48 }}
+        >
           {tab.number}
         </span>
       </div>
 
+      {/* Vertical label */}
       <div className="absolute inset-0 flex items-center justify-center">
         <span
-          className="whitespace-nowrap text-[18px] md:text-[22px] font-medium"
+          className="whitespace-nowrap text-[18px] md:text-[22px] font-medium transition-colors duration-300 group-hover:text-[#00FFB6]"
           style={{
-            color: NEON_48,
             writingMode: "vertical-rl",
             transform: "rotate(180deg)",
-            transformOrigin: "center",
+            color: NEON_48,
           }}
         >
           {tab.label}
         </span>
       </div>
-    </motion.button>
+    </button>
   );
 }

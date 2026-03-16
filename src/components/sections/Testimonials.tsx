@@ -2,153 +2,120 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
-import { FiStar } from "react-icons/fi";
 
-type Testimonial = {
+type TestimonialCard = {
   id: string;
-  rating: number;
-  stars: number;
-  text: string;
-  name: string;
-  variant: "small" | "medium" | "tall";
+  image: string;
+  alt: string;
+  width: number;
+  height: number;
 };
 
 const BRAND_NAVY = "#151A43";
-const CARD_BLUE = "#3F7BFF";
-const STAR_YELLOW = "#FFE600";
 const RED = "#FF1E1E";
+const SECTION_BG = "/testimonials/background.png";
 
-function StarsRow({ count }: { count: number }) {
-  return (
-    <div className="flex items-center gap-[6px]" aria-label={`${count} stars`}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <FiStar
-          key={i}
-          className="text-[14px]"
-          style={{ color: i < count ? STAR_YELLOW : "rgba(255,255,255,0.32)" }}
-        />
-      ))}
-    </div>
-  );
-}
+/**
+ * المقاسات الأصلية من الديزاين:
+ * 1) 560.56 x 425
+ * 2) 504.56 x 425
+ * 3) 393.56 x 425
+ * 4) 393.56 x 425
+ *
+ * بنحافظ على نفس النسب باستخدام scale موحد لكل breakpoint
+ */
+function cardSpec(card: TestimonialCard, idx: number) {
+  const desktopScale = 1;
+  const tabletScale = 0.78;
+  const mobileScale = 0.58;
 
-function cardSpec(v: Testimonial["variant"], idx: number) {
-  // sizes close to reference feel (not uniform)
-  // yOffsets stagger to create the “not same level” look
-  const yOffsets = [18, 0, 26, 10, 22, 6, 30, 12];
-  const y = yOffsets[idx % yOffsets.length];
+  const yBase = [26, 74, 40, 88, 32, 70, 44, 84][idx % 8];
 
-  if (v === "small")
-    return {
-      w: "w-[270px] sm:w-[290px]",
-      minH: "min-h-[280px] sm:min-h-[300px]",
-      y,
-      nameSize: "text-[22px]",
-      textSize: "text-[12.5px]",
-      pad: "px-6 py-6",
-    };
-
-  if (v === "tall")
-    return {
-      w: "w-[330px] sm:w-[370px]",
-      minH: "min-h-[420px] sm:min-h-[460px]",
-      y,
-      nameSize: "text-[26px]",
-      textSize: "text-[13px]",
-      pad: "px-7 py-7",
-    };
-
-  // medium
   return {
-    w: "w-[320px] sm:w-[360px]",
-    minH: "min-h-[360px] sm:min-h-[400px]",
-    y,
-    nameSize: "text-[24px]",
-    textSize: "text-[13px]",
-    pad: "px-7 py-7",
+    className: [
+      `w-[${card.width * mobileScale}px]`,
+      `sm:w-[${card.width * tabletScale}px]`,
+      `lg:w-[${card.width * desktopScale}px]`,
+      `h-[${card.height * mobileScale}px]`,
+      `sm:h-[${card.height * tabletScale}px]`,
+      `lg:h-[${card.height * desktopScale}px]`,
+    ].join(" "),
+    yBase,
   };
 }
 
 export default function Testimonials() {
-  const items: Testimonial[] = useMemo(
+  const items: TestimonialCard[] = useMemo(
     () => [
       {
-        id: "t1",
-        rating: 5.0,
-        stars: 5,
-        variant: "tall",
-        text:
-          "I’ve worked with agencies before, but no one understands the 'Launch' phase like these guys. We spent weeks building the roadmap together, and their attention to detail on the visuals was incredible—it finally felt like my brand looked as professional as the content I was producing",
-        name: "MR BEAST",
+        id: "card-01",
+        image: "/testimonials/cards/card-01.svg",
+        alt: "Testimonial card 1",
+        width: 560.56,
+        height: 425,
       },
       {
-        id: "t2",
-        rating: 5.0,
-        stars: 5,
-        variant: "medium",
-        text:
-          "Before working with the team, I was drowning in the day-to-day. I had the ideas, but no clear roadmap to execute them. They didn't just give me advice; they took over the entire lifecycle of my brand. From the moment they redesigned my visual identity to the day we managed the launch of my latest series, the quality shift was night and day",
-        name: "MR BEAST",
+        id: "card-02",
+        image: "/testimonials/cards/card-02.svg",
+        alt: "Testimonial card 2",
+        width: 504.56,
+        height: 425,
       },
       {
-        id: "t3",
-        rating: 5.0,
-        stars: 5,
-        variant: "small",
-        text:
-          "Most people in this industry handle one piece of the puzzle. What sets this team apart is that they manage the entire lifecycle",
-        name: "MR BEAST",
+        id: "card-03",
+        image: "/testimonials/cards/card-03.svg",
+        alt: "Testimonial card 3",
+        width: 393.56,
+        height: 425,
       },
       {
-        id: "t4",
-        rating: 5.0,
-        stars: 5,
-        variant: "medium",
-        text:
-          "The turnaround was fast, but the quality never dipped. Everything shipped with a system behind it—clean visuals, consistent voice, and a plan we could actually execute.",
-        name: "MR BEAST",
-      },
-      {
-        id: "t5",
-        rating: 5.0,
-        stars: 5,
-        variant: "small",
-        text:
-          "We finally had a real pipeline. The work felt premium from day one, and the results were obvious in the content performance.",
-        name: "MR BEAST",
+        id: "card-04",
+        image: "/testimonials/cards/card-04.svg",
+        alt: "Testimonial card 4",
+        width: 393.56,
+        height: 425,
       },
     ],
     []
   );
 
-  // Infinite loop: 2 copies, animate x, wrap.
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const trackRef = useRef<HTMLDivElement | null>(null);
+  const firstSetRef = useRef<HTMLDivElement | null>(null);
 
   const x = useMotionValue(0);
-  const xSpring = useSpring(x, { stiffness: 80, damping: 18, mass: 0.9 });
+  const xSpring = useSpring(x, {
+    stiffness: 90,
+    damping: 24,
+    mass: 0.95,
+  });
 
-  const [halfWidth, setHalfWidth] = useState(0);
+  const [setWidth, setSetWidth] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
-  const SPEED = 52; // px/s
+  const SPEED = 58;
 
   useEffect(() => {
     const measure = () => {
-      const el = trackRef.current;
-      if (!el) return;
-      setHalfWidth(el.scrollWidth / 2);
+      if (!firstSetRef.current) return;
+      setSetWidth(firstSetRef.current.scrollWidth);
     };
+
     measure();
 
     const ro = new ResizeObserver(measure);
-    if (trackRef.current) ro.observe(trackRef.current);
+    if (firstSetRef.current) ro.observe(firstSetRef.current);
     if (containerRef.current) ro.observe(containerRef.current);
-    return () => ro.disconnect();
+
+    window.addEventListener("resize", measure);
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
   }, []);
 
   useEffect(() => {
-    if (!halfWidth) return;
+    if (!setWidth) return;
 
     let raf = 0;
     let last = performance.now();
@@ -160,137 +127,202 @@ export default function Testimonials() {
 
       if (isDragging) return;
 
-      const cur = x.get();
-      let next = cur - SPEED * dt;
-      if (next <= -halfWidth) next += halfWidth;
+      let next = x.get() - SPEED * dt;
+
+      if (next <= -setWidth) {
+        next += setWidth;
+      }
+
       x.set(next);
     };
 
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [halfWidth, isDragging, x]);
+  }, [setWidth, isDragging, x]);
 
-  const onDragStart = () => setIsDragging(true);
-  const onDragEnd = () => {
-    setIsDragging(false);
-    if (!halfWidth) return;
-    let norm = x.get();
-    while (norm > 0) norm -= halfWidth;
-    while (norm <= -halfWidth) norm += halfWidth;
-    x.set(norm);
+  const normalizeX = () => {
+    if (!setWidth) return;
+
+    let current = x.get();
+
+    while (current > 0) current -= setWidth;
+    while (current <= -setWidth) current += setWidth;
+
+    x.set(current);
   };
 
   return (
-    <section id="testimonials" className="relative w-full overflow-hidden bg-white">
-      {/* Background faint */}
-      <div aria-hidden="true" className="absolute inset-0">
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(1200px 700px at 50% 20%, rgba(21,26,67,0.06) 0%, rgba(255,255,255,0) 55%)",
-          }}
-        />
-        <div
-          className="absolute right-[-140px] top-[-120px] text-[220px] font-extrabold tracking-tight select-none"
-          style={{ color: "rgba(21,26,67,0.04)" }}
-        >
-          W
-        </div>
-      </div>
+    <section
+      id="testimonials"
+      className="relative w-full overflow-x-hidden bg-[#F4F4F4]"
+    >
+      {/* background */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `url('${SECTION_BG}')`,
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center top",
+          backgroundSize: "cover",
+          opacity: 1,
+        }}
+      />
 
-      <div className="relative z-10 mx-auto max-w-[1240px] px-4 sm:px-6 py-14 sm:py-18">
-        {/* Header */}
+      {/* header */}
+      <div className="relative z-10 mx-auto max-w-[1240px] px-4 sm:px-6 pt-14 sm:pt-16 lg:pt-18">
         <div className="text-center">
-          <div className="text-[11px] tracking-[0.20em] font-semibold" style={{ color: BRAND_NAVY, opacity: 0.7 }}>
+          <div
+            className="text-[11px] sm:text-[12px] font-semibold tracking-[0.22em]"
+            style={{ color: BRAND_NAVY, opacity: 0.72 }}
+          >
             ( TESTIMONIALS )
           </div>
 
-          <h2 className="mt-3 text-[26px] sm:text-[34px] md:text-[40px] font-extrabold tracking-tight" style={{ color: BRAND_NAVY }}>
+          <h2
+            className="mt-3 text-[30px] sm:text-[42px] lg:text-[56px] font-extrabold tracking-tight leading-[0.95]"
+            style={{ color: BRAND_NAVY }}
+          >
             DON&apos;T TAKE OUR WORD FOR IT
           </h2>
 
-          <div className="mt-3 flex items-center justify-center gap-10 text-[11px] tracking-[0.28em] font-extrabold">
-            <span style={{ color: RED }}>•</span>
-            <span style={{ color: RED }}>TAKE THEIRS</span>
-            <span style={{ color: RED }}>•</span>
+          <div className="mt-5 flex items-center justify-center gap-8 sm:gap-10">
+            <span
+              className="text-[11px] sm:text-[12px] font-extrabold tracking-[0.28em]"
+              style={{ color: RED }}
+            >
+              •
+            </span>
+            <span
+              className="text-[11px] sm:text-[12px] font-extrabold tracking-[0.34em]"
+              style={{ color: RED }}
+            >
+              TAKE THEIRS
+            </span>
+            <span
+              className="text-[11px] sm:text-[12px] font-extrabold tracking-[0.28em]"
+              style={{ color: RED }}
+            >
+              •
+            </span>
           </div>
         </div>
+      </div>
 
-        {/* Marquee (NO white fade overlays) */}
-        <div className="mt-10 sm:mt-12">
-          <div ref={containerRef} className="relative w-full overflow-hidden">
-            <motion.div
-              ref={trackRef}
-              className="flex gap-7 will-change-transform"
-              style={{ x: xSpring }}
-              drag="x"
-              dragConstraints={{ left: -Infinity, right: Infinity }}
-              dragElastic={0.06}
-              dragMomentum={true}
-              onDragStart={onDragStart}
-              onDragEnd={onDragEnd}
+      {/* marquee */}
+      <div className="relative z-10 mt-12 sm:mt-14 lg:mt-16 pb-20 sm:pb-24 lg:pb-28">
+        <div
+          ref={containerRef}
+          className="
+            relative w-full overflow-hidden
+            min-h-[360px]
+            sm:min-h-[470px]
+            lg:min-h-[620px]
+          "
+        >
+          <motion.div
+            className="flex w-max will-change-transform pt-6 sm:pt-8 lg:pt-10 pb-16 sm:pb-20 lg:pb-24"
+            style={{ x: xSpring }}
+            drag="x"
+            dragConstraints={{ left: -Infinity, right: Infinity }}
+            dragElastic={0.03}
+            dragMomentum
+            onDragStart={() => setIsDragging(true)}
+            onDragEnd={() => {
+              setIsDragging(false);
+              normalizeX();
+            }}
+          >
+            <div
+              ref={firstSetRef}
+              className="flex items-start gap-4 sm:gap-5 lg:gap-7 px-3 sm:px-4 lg:px-5"
             >
-              {[...items, ...items].map((t, idx) => (
-                <TestimonialCard key={`${t.id}-${idx}`} t={t} idx={idx} />
+              {items.map((card, idx) => (
+                <ImageCard key={`${card.id}-set1`} card={card} idx={idx} />
               ))}
-            </motion.div>
-          </div>
+            </div>
+
+            <div className="flex items-start gap-4 sm:gap-5 lg:gap-7 px-3 sm:px-4 lg:px-5">
+              {items.map((card, idx) => (
+                <ImageCard
+                  key={`${card.id}-set2`}
+                  card={card}
+                  idx={idx + items.length}
+                />
+              ))}
+            </div>
+
+            <div className="flex items-start gap-4 sm:gap-5 lg:gap-7 px-3 sm:px-4 lg:px-5">
+              {items.map((card, idx) => (
+                <ImageCard
+                  key={`${card.id}-set3`}
+                  card={card}
+                  idx={idx + items.length * 2}
+                />
+              ))}
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
   );
 }
 
-function TestimonialCard({ t, idx }: { t: Testimonial; idx: number }) {
-  const spec = cardSpec(t.variant, idx);
-  const phase = (idx % 7) * 0.17;
+function ImageCard({
+  card,
+  idx,
+}: {
+  card: TestimonialCard;
+  idx: number;
+}) {
+  const spec = cardSpec(card, idx);
+
+  /**
+   * أنيميشن رأسي أنعم:
+   * - مش هزة
+   * - حركة بسيطة
+   * - offsets مختلفة بين الكاردات
+   */
+  const travelUp = 10;
+  const travelDown = 8;
+  const phase = (idx % 4) * 0.35;
 
   return (
-    <motion.div
+    <motion.article
       className={[
-        "shrink-0 rounded-[10px] flex flex-col",
-        spec.w,
-        spec.minH,
-        spec.pad,
+        "relative shrink-0 overflow-hidden rounded-[14px]",
+        spec.className,
       ].join(" ")}
       style={{
-        background: CARD_BLUE,
-        boxShadow: "0 22px 50px rgba(0,0,0,0.12)",
+        boxShadow: "0 18px 42px rgba(0,0,0,0.08)",
       }}
       initial={false}
       animate={{
-        y: [spec.y, spec.y - 10, spec.y], // floating stagger
-        scale: [1, 1.03, 1],
+        y: [
+          spec.yBase,
+          spec.yBase - travelUp,
+          spec.yBase,
+          spec.yBase + travelDown,
+          spec.yBase,
+        ],
       }}
       transition={{
-        duration: 3.6,
+        duration: 5.6,
         repeat: Infinity,
         ease: "easeInOut",
         delay: phase,
       }}
-      whileHover={{ scale: 1.045 }}
+      whileHover={{
+        y: spec.yBase - 4,
+        transition: { duration: 0.22, ease: "easeOut" },
+      }}
     >
-      {/* top row */}
-      <div className="flex items-center gap-4 text-white">
-        <div className="text-[18px] font-extrabold">{t.rating.toFixed(1)}</div>
-        <StarsRow count={t.stars} />
-      </div>
-
-      <div className="mt-5 h-[1px] w-full bg-white/25" />
-
-      <p className={["mt-5 text-white/90 leading-[1.65]", spec.textSize].join(" ")}>
-        “{t.text}”
-      </p>
-
-      <div className="mt-auto pt-7">
-        <div
-          className={["text-white font-extrabold tracking-wide", spec.nameSize].join(" ")}
-          style={{ fontFamily: "var(--font-godber)" }}
-        >
-          {t.name}
-        </div>
-      </div>
-    </motion.div>
+      <img
+        src={card.image}
+        alt={card.alt}
+        draggable={false}
+        className="h-full w-full select-none object-cover"
+      />
+    </motion.article>
   );
 }

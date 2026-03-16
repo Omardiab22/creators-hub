@@ -9,7 +9,7 @@ export default function Footer() {
       <div className="relative w-full overflow-hidden">
         <div className="relative w-full h-[533.33px] max-[1023px]:h-[420px] max-[767px]:h-[360px]">
           <img
-            src="/footer/footer-hero.jpg"
+            src="/footer/footer-hero.jpeg"
             alt=""
             draggable={false}
             className="h-full w-full object-cover object-[50%_35%] select-none pointer-events-none"

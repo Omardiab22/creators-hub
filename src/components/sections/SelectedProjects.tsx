@@ -7,14 +7,14 @@ import { FiChevronLeft, FiChevronRight, FiX } from "react-icons/fi";
 type Project = {
   id: string;
   label: string;
-  video: string;          // ✅ local mp4 path
+  video: string;
   subtitle?: string;
   paragraphs?: string[];
-  thumbs?: string[];      // ✅ local images (optional)
+  thumbs?: string[];
 };
 
 const popIn = (delay = 0) => ({
-  initial: { opacity: 0, scale: 0.9, y: 12 },
+  initial: { opacity: 0, scale: 0.92, y: 12 },
   animate: { opacity: 1, scale: 1, y: 0 },
   transition: { delay, type: "spring" as const, stiffness: 180, damping: 18 },
 });
@@ -25,6 +25,7 @@ const LABEL_MARGIN = 16;
 function clamp(n: number, a: number, b: number) {
   return Math.max(a, Math.min(b, n));
 }
+
 function fmtTime(sec: number) {
   if (!isFinite(sec) || sec < 0) sec = 0;
   const m = Math.floor(sec / 60);
@@ -33,7 +34,6 @@ function fmtTime(sec: number) {
 }
 
 export default function SelectedProjects() {
-  // ✅ ضع ملفات mp4 في public/projects/ بالأسماء دي
   const projects: Project[] = useMemo(
     () => [
       {
@@ -46,7 +46,6 @@ export default function SelectedProjects() {
           "Our work focused on bridging the gap between high-energy creator culture and premium streetwear aesthetics.",
         ],
         thumbs: [
-          // optional: ضع الصور دي في public/projects/thumbs/
           "/projects/thumbs/t1.jpg",
           "/projects/thumbs/t2.jpg",
           "/projects/thumbs/t3.jpg",
@@ -55,23 +54,41 @@ export default function SelectedProjects() {
           "/projects/thumbs/t6.jpg",
         ],
       },
-      { id: "p2", label: "PROJECT TWO / PROMO", video: "/projects/p2.mp4", subtitle: "[SELECTED PROJECTS]" },
-      { id: "p3", label: "PROJECT THREE / CAMPAIGN", video: "/projects/p3.mp4", subtitle: "[SELECTED PROJECTS]" },
-      { id: "p4", label: "PROJECT FOUR / EDIT", video: "/projects/p4.mp4", subtitle: "[SELECTED PROJECTS]" },
-      { id: "p5", label: "PROJECT FIVE / SHORT", video: "/projects/p5.mp4", subtitle: "[SELECTED PROJECTS]" },
+      {
+        id: "p2",
+        label: "PROJECT TWO / PROMO",
+        video: "/projects/p2.mp4",
+        subtitle: "[SELECTED PROJECTS]",
+      },
+      {
+        id: "p3",
+        label: "PROJECT THREE / CAMPAIGN",
+        video: "/projects/p3.mp4",
+        subtitle: "[SELECTED PROJECTS]",
+      },
+      {
+        id: "p4",
+        label: "PROJECT FOUR / EDIT",
+        video: "/projects/p4.mp4",
+        subtitle: "[SELECTED PROJECTS]",
+      },
+      {
+        id: "p5",
+        label: "PROJECT FIVE / SHORT",
+        video: "/projects/p5.mp4",
+        subtitle: "[SELECTED PROJECTS]",
+      },
     ],
     []
   );
 
   const [index, setIndex] = useState(0);
-  const [dir, setDir] = useState<1 | -1>(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const active = projects[index];
 
   const go = useCallback(
     (nextDir: 1 | -1) => {
-      setDir(nextDir);
       setIndex((i) => {
         const n = projects.length;
         return (i + nextDir + n) % n;
@@ -80,30 +97,24 @@ export default function SelectedProjects() {
     [projects.length]
   );
 
-  // Keyboard
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setIsFullscreen(false);
-      if (!isFullscreen) {
-        if (e.key === "ArrowRight") go(1);
-        if (e.key === "ArrowLeft") go(-1);
-      } else {
-        // داخل fullscreen: الأسهم تغير الفيديو كمان
-        if (e.key === "ArrowRight") go(1);
-        if (e.key === "ArrowLeft") go(-1);
-      }
+      if (e.key === "ArrowRight") go(1);
+      if (e.key === "ArrowLeft") go(-1);
     };
+
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [go, isFullscreen]);
+  }, [go]);
 
-  // Drag/swipe على الكارد (بره fullscreen فقط)
   const startXRef = useRef<number | null>(null);
   const lastXRef = useRef<number | null>(null);
   const draggingRef = useRef(false);
 
   const onCardPointerDown = (e: React.PointerEvent) => {
     if (isFullscreen) return;
+
     const t = e.target as HTMLElement | null;
     if (t?.closest?.("[data-play-btn]")) return;
 
@@ -112,10 +123,12 @@ export default function SelectedProjects() {
     lastXRef.current = e.clientX;
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   };
+
   const onCardPointerMove = (e: React.PointerEvent) => {
     if (!draggingRef.current || isFullscreen) return;
     lastXRef.current = e.clientX;
   };
+
   const onCardPointerUp = () => {
     if (!draggingRef.current || isFullscreen) return;
     draggingRef.current = false;
@@ -126,21 +139,13 @@ export default function SelectedProjects() {
     lastXRef.current = null;
 
     if (startX == null || lastX == null) return;
+
     const dx = lastX - startX;
-    const TH = 70;
-    if (Math.abs(dx) < TH) return;
+    if (Math.abs(dx) < 70) return;
 
     go(dx < 0 ? 1 : -1);
   };
 
-  // Animations
-  const labelVariants = {
-    enter: (d: 1 | -1) => ({ x: d === 1 ? -80 : 80, opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (d: 1 | -1) => ({ x: d === 1 ? 80 : -80, opacity: 0 }),
-  };
-
-  // Fullscreen player
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -152,12 +157,14 @@ export default function SelectedProjects() {
     if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
     rafRef.current = null;
   };
+
   const tick = () => {
     const v = videoRef.current;
     if (!v) return;
     setT(v.currentTime || 0);
     rafRef.current = requestAnimationFrame(tick);
   };
+
   const startRAF = () => {
     stopRAF();
     rafRef.current = requestAnimationFrame(tick);
@@ -169,6 +176,7 @@ export default function SelectedProjects() {
     if (v.paused) v.play().catch(() => {});
     else v.pause();
   };
+
   const toggleMute = () => {
     const v = videoRef.current;
     if (!v) return;
@@ -176,6 +184,7 @@ export default function SelectedProjects() {
     setMuted(next);
     v.muted = next;
   };
+
   const seekTo = (next: number) => {
     const v = videoRef.current;
     if (!v) return;
@@ -184,7 +193,6 @@ export default function SelectedProjects() {
     setT(to);
   };
 
-  // sync video events when fullscreen + project changes
   useEffect(() => {
     if (!isFullscreen) {
       stopRAF();
@@ -229,23 +237,12 @@ export default function SelectedProjects() {
     };
   }, [isFullscreen, active.id, muted]);
 
-  const progress = dur > 0 ? t / dur : 0;
-
-  // card placeholder bg
-  const cardBg = useMemo(() => {
-    const bgs = [
-      "linear-gradient(180deg, rgba(250,230,175,1) 0%, rgba(220,185,120,1) 100%)",
-      "linear-gradient(180deg, rgba(250,230,175,1) 0%, rgba(220,185,120,1) 100%)",
-      "linear-gradient(180deg, rgba(250,230,175,1) 0%, rgba(220,185,120,1) 100%)",
-      "linear-gradient(180deg, rgba(250,230,175,1) 0%, rgba(220,185,120,1) 100%)",
-      "linear-gradient(180deg, rgba(250,230,175,1) 0%, rgba(220,185,120,1) 100%)",
-    ];
-    return bgs[index % bgs.length];
-  }, [index]);
-
   return (
-    <section id="selected-projects" className="relative w-full overflow-hidden" style={{ backgroundColor: "#00FFB6" }}>
-      {/* background waves */}
+    <section
+      id="selected-projects"
+      className="relative w-full overflow-hidden"
+      style={{ backgroundColor: "#00FFB6" }}
+    >
       <div
         aria-hidden="true"
         className="absolute inset-0"
@@ -254,144 +251,211 @@ export default function SelectedProjects() {
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
-          opacity: 1,
         }}
       />
 
-      {/* content */}
-      <div className="relative z-30 w-full px-4 sm:px-6 py-14 sm:py-20">
-        <div className="mx-auto w-full max-w-[1240px]">
-          <div className="relative grid gap-10 lg:grid-cols-[380px_1fr] lg:items-center">
-            {/* LEFT */}
-            <div className="relative z-10 text-[#151A43]">
-              <div className="flex items-center gap-3">
-                <motion.button
-                  type="button"
-                  aria-label="Previous project"
-                  onClick={() => go(-1)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.96 }}
-                  className="h-[34px] w-[34px] rounded-full bg-white/30 backdrop-blur flex items-center justify-center"
-                >
-                  <FiChevronLeft className="text-[18px] text-[#151A43]" />
-                </motion.button>
-
-                <span className="text-[12px] font-bold tracking-[0.22em] text-[#151A43]">SWIPE</span>
-
-                <motion.button
-                  type="button"
-                  aria-label="Next project"
-                  onClick={() => go(1)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.96 }}
-                  className="h-[34px] w-[34px] rounded-full bg-white/30 backdrop-blur flex items-center justify-center"
-                >
-                  <FiChevronRight className="text-[18px] text-[#151A43]" />
-                </motion.button>
-              </div>
-
-              <motion.h2
-                className="mt-6 text-[#151A43] font-extrabold tracking-tight leading-[0.95] text-[clamp(34px,6vw,56px)]"
-                initial={popIn(0.08).initial}
-                animate={popIn(0.08).animate}
-                transition={popIn(0.08).transition}
-              >
-                SELECTED <br /> PROJECTS
-              </motion.h2>
-
-              <div className="mt-6 flex w-[260px] max-w-full gap-2">
-                {projects.map((p, i) => (
-                  <span
-                    key={p.id}
-                    className={["h-[3px] flex-1 rounded-full transition-all duration-300", i === index ? "bg-[#151A43]" : "bg-[#151A43]/25"].join(" ")}
-                    aria-hidden="true"
-                  />
-                ))}
-              </div>
+      <div className="relative z-30 w-full py-14 sm:py-20 lg:py-24">
+        <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-6">
+          {/* LEFT */}
+          <div
+            className="
+              relative z-20
+              w-full
+              px-4 sm:px-6
+              text-[#151A43]
+              text-center
+              flex flex-col items-center
+              lg:w-[390px] lg:shrink-0
+              lg:items-start lg:text-left
+              lg:pl-[max(54px,calc((100vw-1152px)/2+54px))]
+            "
+          >
+            {/* plus decoration - starts from same container line */}
+            <div className="pointer-events-none absolute left-0 top-1/2 hidden -translate-x-[118px] -translate-y-1/2 lg:block">
+              <img
+                src="/hero/svg/plus.svg"
+                alt=""
+                draggable={false}
+                className="h-[430px] w-auto select-none"
+              />
             </div>
 
-            {/* RIGHT CARD */}
-            <div className="relative z-10">
-              <div className="relative flex justify-end">
-                <div className="relative w-[min(900px,100%)] aspect-video" style={{ marginRight: "clamp(-90px, -5vw, -24px)" }}>
-                  <div className="relative h-full w-full" style={{ transform: "rotate(-2.3deg)", transformOrigin: "70% 50%" }}>
-                    {/* under layers */}
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0"
+            <div className="flex items-center gap-4">
+              <motion.button
+                type="button"
+                aria-label="Previous project"
+                onClick={() => go(-1)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.96 }}
+                className="flex h-[34px] w-[34px] cursor-pointer items-center justify-center rounded-full bg-white/25 backdrop-blur"
+              >
+                <FiChevronLeft className="text-[18px] text-[#151A43]" />
+              </motion.button>
+
+              <span className="text-[13px] font-bold tracking-[0.28em] text-[#151A43]">
+                SWIPE
+              </span>
+
+              <motion.button
+                type="button"
+                aria-label="Next project"
+                onClick={() => go(1)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.96 }}
+                className="flex h-[34px] w-[34px] cursor-pointer items-center justify-center rounded-full bg-white/25 backdrop-blur"
+              >
+                <FiChevronRight className="text-[18px] text-[#151A43]" />
+              </motion.button>
+            </div>
+
+            <motion.h2
+              className="mt-8 font-bold leading-[0.94] tracking-tight text-[#151A43] text-[clamp(40px,5vw,66px)]"
+              initial={popIn(0.08).initial}
+              animate={popIn(0.08).animate}
+              transition={popIn(0.08).transition}
+            >
+              SELECTED
+              <br />
+              PROJECTS
+            </motion.h2>
+
+            <div className="mt-10 flex w-[280px] items-center justify-center gap-[6px] lg:justify-start">
+              {projects.map((p, i) => (
+                <span
+                  key={p.id}
+                  aria-hidden="true"
+                  className={[
+                    "h-[4px] rounded-full transition-all duration-300",
+                    i === index ? "w-[86px] bg-[#151A43]" : "w-[38px] bg-[#151A43]/35",
+                  ].join(" ")}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT */}
+          <div className="relative z-10 min-w-0 flex-1">
+            <div className="relative flex justify-end">
+              <div
+                className="relative aspect-[1.2/0.78] w-full max-w-[980px]"
+                style={{ marginRight: "clamp(-120px,-7vw,-28px)" }}
+              >
+                <div
+                  className="relative h-full w-full"
+                  style={{
+                    transform: "rotate(-2.3deg)",
+                    transformOrigin: "72% 50%",
+                  }}
+                >
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0"
+                    style={{
+                      transform: "translate(42px, 34px)",
+                      background: "#08A678",
+                      borderRadius: R,
+                      clipPath: "polygon(0 0, 92% 0, 100% 22%, 100% 100%, 0 100%)",
+                    }}
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0"
+                    style={{
+                      transform: "translate(26px, 22px)",
+                      background: "#1FC393",
+                      borderRadius: R,
+                      clipPath: "polygon(0 0, 92% 0, 100% 22%, 100% 100%, 0 100%)",
+                    }}
+                  />
+
+                  <div
+                    className="pointer-events-none absolute left-0 top-0"
+                    style={{
+                      zIndex: 50,
+                      transform: "translate(-42%, -46%)",
+                    }}
+                  >
+                    <img
+                      src="/hero/bar2.svg"
+                      alt=""
+                      draggable={false}
                       style={{
-                        transform: "translate(40px, 34px)",
-                        background: "#08A678",
-                        borderRadius: R,
-                        clipPath: "polygon(0 0, 92% 0, 100% 22%, 100% 100%, 0 100%)",
+                        width: 118,
+                        height: 118,
                       }}
                     />
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0"
-                      style={{
-                        transform: "translate(26px, 22px)",
-                        background: "#1FC393",
-                        borderRadius: R,
-                        clipPath: "polygon(0 0, 92% 0, 100% 22%, 100% 100%, 0 100%)",
-                      }}
-                    />
+                  </div>
 
-                    {/* lightning */}
-                    <div className="pointer-events-none absolute left-0 top-0" style={{ zIndex: 80, transform: "translate(-68%, -68%)" }}>
-                      <img src="/hero/bar2.svg" alt="" draggable={false} style={{ width: 128, height: 128 }} />
-                    </div>
-
-                    {/* main card */}
-                    <div
-                      className="relative h-full w-full overflow-hidden"
-                      style={{
-                        borderRadius: R,
-                        boxShadow: "0 34px 70px rgba(0,0,0,0.22), 0 18px 36px rgba(0,0,0,0.14)",
-                        clipPath: "polygon(0 0, 92% 0, 100% 22%, 100% 100%, 0 100%)",
-                        cursor: "grab",
-                        touchAction: "pan-y",
-                        background: cardBg,
+                  <div
+                    className="relative h-full w-full overflow-hidden"
+                    style={{
+                      borderRadius: R,
+                      clipPath: "polygon(0 0, 92% 0, 100% 22%, 100% 100%, 0 100%)",
+                      boxShadow:
+                        "0 34px 70px rgba(0,0,0,0.22), 0 18px 36px rgba(0,0,0,0.14)",
+                      cursor: "grab",
+                      touchAction: "pan-y",
+                      background:
+                        "linear-gradient(180deg, rgba(250,230,175,1) 0%, rgba(220,185,120,1) 100%)",
+                    }}
+                    onPointerDown={onCardPointerDown}
+                    onPointerMove={onCardPointerMove}
+                    onPointerUp={onCardPointerUp}
+                    onPointerCancel={onCardPointerUp}
+                  >
+                    <button
+                      data-play-btn
+                      type="button"
+                      aria-label="Play video"
+                      onPointerDownCapture={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsFullscreen(true);
                       }}
-                      onPointerDown={onCardPointerDown}
-                      onPointerMove={onCardPointerMove}
-                      onPointerUp={onCardPointerUp}
-                      onPointerCancel={onCardPointerUp}
+                      className="absolute left-1/2 top-1/2 z-[60] -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+                      style={{ width: 96, height: 96 }}
                     >
-                      <button
-                        data-play-btn
-                        type="button"
-                        aria-label="Play video"
-                        onPointerDownCapture={(e) => e.stopPropagation()}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsFullscreen(true);
-                        }}
-                        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                        style={{ width: 92, height: 92, zIndex: 60, cursor: "pointer" }}
-                      >
-                        <img src="/playicon.svg" alt="" draggable={false} style={{ width: 92, height: 92 }} />
-                      </button>
+                      <img
+                        src="/playicon.svg"
+                        alt=""
+                        draggable={false}
+                        style={{ width: 96, height: 96, cursor: "pointer" }}
+                      />
+                    </button>
 
-                      {/* white rect */}
-                      <div className="pointer-events-none absolute" style={{ left: LABEL_MARGIN, right: LABEL_MARGIN, bottom: 18, height: 66 }}>
-                        <div aria-hidden="true" className="absolute inset-0" style={{ transform: "translate(0px, 10px)", background: "rgba(0,0,0,0.65)", borderRadius: R }} />
-                        <div
-                          className="absolute inset-0 flex items-center justify-center bg-white"
-                          style={{
-                            borderRadius: R,
-                            fontFamily: "var(--font-godber)",
-                            fontWeight: 400,
-                            fontSize: 36,
-                            color: "#FF1E1E",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            padding: "0 12px",
-                          }}
-                        >
-                          {active.label}
-                        </div>
+                    <div
+                      className="pointer-events-none absolute"
+                      style={{
+                        left: LABEL_MARGIN,
+                        right: LABEL_MARGIN,
+                        bottom: 20,
+                        height: 68,
+                      }}
+                    >
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-0"
+                        style={{
+                          transform: "translateY(10px)",
+                          background: "rgba(48,35,12,0.7)",
+                          borderRadius: R,
+                        }}
+                      />
+                      <div
+                        className="absolute inset-0 flex items-center justify-center bg-[#F6F6F6]"
+                        style={{
+                          borderRadius: R,
+                          fontFamily: "var(--font-godber)",
+                          fontWeight: 400,
+                          fontSize: "clamp(18px,2.2vw,36px)",
+                          color: "#FF1E1E",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          padding: "0 16px",
+                        }}
+                      >
+                        {active.label}
                       </div>
                     </div>
                   </div>
@@ -402,11 +466,14 @@ export default function SelectedProjects() {
         </div>
       </div>
 
-      {/* FULLSCREEN player */}
       <AnimatePresence>
         {isFullscreen && (
-          <motion.div className="absolute inset-0 z-[200] overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            {/* full background video */}
+          <motion.div
+            className="absolute inset-0 z-[200] overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
             <video
               ref={videoRef}
               src={active.video}
@@ -417,7 +484,6 @@ export default function SelectedProjects() {
               preload="metadata"
             />
 
-            {/* overlay (contrast like reference) */}
             <div
               aria-hidden="true"
               className="absolute inset-0"
@@ -428,21 +494,22 @@ export default function SelectedProjects() {
               }}
             />
 
-            {/* close */}
             <button
               type="button"
               aria-label="Close"
               onClick={() => setIsFullscreen(false)}
-              className="absolute right-6 top-6 z-[230] h-[38px] w-[38px] rounded-full bg-white/20 backdrop-blur grid place-items-center"
+              className="absolute right-6 top-6 z-[230] grid h-[38px] w-[38px] cursor-pointer place-items-center rounded-full bg-white/20 backdrop-blur"
+              style={{ cursor: "pointer" }}
             >
-              <FiX className="text-white text-[18px]" />
+              <FiX className="text-[18px] text-white" />
             </button>
 
-            {/* Left text */}
             <div className="absolute left-8 top-8 z-[220] max-w-[420px] text-white">
-              <div className="text-[10px] tracking-[0.18em] opacity-70">{active.subtitle ?? "[SELECTED PROJECTS]"}</div>
+              <div className="text-[10px] tracking-[0.18em] opacity-70">
+                {active.subtitle ?? "[SELECTED PROJECTS]"}
+              </div>
 
-              <div className="mt-3 leading-[0.95] font-extrabold">
+              <div className="mt-3 font-extrabold leading-[0.95]">
                 <div className="text-[56px]">{active.label.split("/")[0]?.trim()}</div>
                 <div className="text-[56px]">/ {active.label.split("/")[1]?.trim()}</div>
               </div>
@@ -454,15 +521,14 @@ export default function SelectedProjects() {
               </div>
             </div>
 
-            {/* Bottom: thumbs + timeline */}
-            <div className="absolute left-0 right-0 bottom-0 z-[230] px-8 pb-8">
-              {/* thumbs + prev/next (تغيير المشروع/الفيديو) */}
-              <div className="flex items-center gap-4 mb-3">
+            <div className="absolute bottom-0 left-0 right-0 z-[230] px-8 pb-8">
+              <div className="mb-3 flex items-center gap-4">
                 <button
                   type="button"
                   onClick={() => go(-1)}
-                  className="h-[36px] w-[36px] rounded-full bg-white/15 backdrop-blur text-white grid place-items-center"
+                  className="grid h-[36px] w-[36px] cursor-pointer place-items-center rounded-full bg-white/15 text-white backdrop-blur"
                   aria-label="Previous video"
+                  style={{ cursor: "pointer" }}
                 >
                   <FiChevronLeft />
                 </button>
@@ -489,38 +555,47 @@ export default function SelectedProjects() {
                 <button
                   type="button"
                   onClick={() => go(1)}
-                  className="h-[36px] w-[36px] rounded-full bg-white/15 backdrop-blur text-white grid place-items-center"
+                  className="grid h-[36px] w-[36px] cursor-pointer place-items-center rounded-full bg-white/15 text-white backdrop-blur"
                   aria-label="Next video"
+                  style={{ cursor: "pointer" }}
                 >
                   <FiChevronRight />
                 </button>
               </div>
 
-              {/* controls row */}
               <div className="flex items-center gap-4 text-white/90">
                 <button
                   type="button"
                   onClick={togglePlay}
-                  className="h-[34px] w-[34px] rounded-full bg-white/15 backdrop-blur grid place-items-center"
+                  className="grid h-[34px] w-[34px] cursor-pointer place-items-center rounded-full bg-white/15 backdrop-blur"
                   aria-label={isPlaying ? "Pause" : "Play"}
+                  style={{ cursor: "pointer" }}
                 >
-                  {isPlaying ? <span className="text-[14px] font-bold">||</span> : <span className="text-[14px] font-bold">▶</span>}
+                  {isPlaying ? (
+                    <span className="text-[14px] font-bold">||</span>
+                  ) : (
+                    <span className="text-[14px] font-bold">▶</span>
+                  )}
                 </button>
 
                 <button
                   type="button"
                   onClick={toggleMute}
-                  className="h-[34px] px-3 rounded-full bg-white/15 backdrop-blur text-[12px]"
+                  className="h-[34px] cursor-pointer rounded-full bg-white/15 px-3 text-[12px] backdrop-blur"
                   aria-label={muted ? "Unmute" : "Mute"}
+                  style={{ cursor: "pointer" }}
                 >
                   {muted ? "MUTED" : "SOUND"}
                 </button>
 
-                <div className="text-[12px] w-[54px]">{fmtTime(t)}</div>
+                <div className="w-[54px] text-[12px]">{fmtTime(t)}</div>
 
                 <div className="flex-1">
                   <div className="relative h-[6px] rounded-full bg-white/25">
-                    <div className="absolute left-0 top-0 h-[6px] rounded-full bg-white" style={{ width: `${(dur > 0 ? (t / dur) * 100 : 0)}%` }} />
+                    <div
+                      className="absolute left-0 top-0 h-[6px] rounded-full bg-white"
+                      style={{ width: `${dur > 0 ? (t / dur) * 100 : 0}%` }}
+                    />
                     <input
                       type="range"
                       min={0}
@@ -528,14 +603,19 @@ export default function SelectedProjects() {
                       step={0.1}
                       value={t}
                       onChange={(e) => seekTo(Number(e.target.value))}
-                      className="absolute inset-0 w-full opacity-0 cursor-pointer"
+                      className="absolute inset-0 w-full cursor-pointer opacity-0"
                       aria-label="Seek"
                     />
-                    <div className="absolute top-1/2 -translate-y-1/2 h-[14px] w-[14px] rounded-full bg-white" style={{ left: `calc(${(dur > 0 ? (t / dur) * 100 : 0)}% - 7px)` }} />
+                    <div
+                      className="absolute top-1/2 h-[14px] w-[14px] -translate-y-1/2 rounded-full bg-white"
+                      style={{
+                        left: `calc(${dur > 0 ? (t / dur) * 100 : 0}% - 7px)`,
+                      }}
+                    />
                   </div>
                 </div>
 
-                <div className="text-[12px] w-[54px] text-right">{fmtTime(dur)}</div>
+                <div className="w-[54px] text-right text-[12px]">{fmtTime(dur)}</div>
               </div>
             </div>
           </motion.div>

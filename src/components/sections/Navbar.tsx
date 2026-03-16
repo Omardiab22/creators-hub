@@ -319,7 +319,7 @@ export default function Navbar() {
         className="
           fixed
           bottom-5 right-5
-          z-[9999]
+          z-[1000000000000000000]
           flex items-center justify-center
           h-[56px] w-[56px]
           rounded-full

@@ -9,171 +9,164 @@ export default function AboutUs() {
       className="w-full bg-white"
       style={{ fontFamily: "var(--font-kollektif)" }}
     >
-      <div className="mx-auto w-full max-w-[1180px] px-4 pt-[32px] pb-[40px]">
-        {/* heading */}
-        <h2
-          className="
-            mb-[18px]
-            text-[#0A0F2C]
-            font-extrabold
-            leading-[1]
-            tracking-[-0.01em]
-            text-[44px]
-            max-[1199px]:text-[clamp(34px,4vw,44px)]
-          "
-        >
-          ABOUT US
-        </h2>
-
-        {/* row */}
-        <div
-          className="
-            flex gap-[16px]
-            items-stretch
-            w-full
-            max-[1199px]:flex-col
-            max-[1199px]:items-center
-          "
-        >
-          {/* LEFT CARD */}
-          <div
+      <div
+        className="
+          mx-auto w-full max-w-[1180px] px-4
+          pt-[28px] pb-[40px]
+          lg:h-[633px]
+          lg:pt-[34px]
+          lg:pb-[34px]
+        "
+      >
+        <div className="flex h-full flex-col lg:justify-center">
+          <h2
             className="
-              relative
-              flex-1
-              min-w-[360px]
-              h-[360px]
-              rounded-[14px]
-              bg-[#141B4D]
-              p-[18px]
-              overflow-hidden
-              max-[1199px]:w-[min(680px,100%)]
-              max-[1199px]:min-w-0
-              max-[767px]:w-full
-              max-[767px]:h-auto max-[767px]:min-h-[320px]
+              mb-[18px]
+              text-[40px]
+              font-extrabold
+              leading-[0.95]
+              tracking-[-0.03em]
+              text-[#0A0F2C]
+              sm:text-[46px]
+              lg:mb-[24px]
+              lg:text-[56px]
             "
           >
-            {/* top row: full width */}
-            <div className="flex items-start justify-between w-full">
-              {/* logo container (fixed box) -> img fills (w-full h-full) */}
-              <div className="h-[28px] w-[120px]">
-                <img
-                  src="/about/logo.svg"
-                  alt="Creators Hub"
-                  draggable={false}
-                  className="h-full w-full object-contain select-none pointer-events-none"
-                />
-              </div>
+            ABOUT US
+          </h2>
 
-              {/* right side: target + squares */}
-              <div className="flex items-center gap-[12px]">
-                {/* target container -> img fills (w-full h-full) */}
-                <div className="h-[16px] w-[16px]">
+          <div className="flex w-full items-stretch gap-[12px] max-lg:flex-col">
+            {/* LEFT CARD */}
+            <div
+              className="
+                relative w-full shrink-0 overflow-hidden
+                rounded-[8.89px] bg-[#171C61]
+                h-[417px]
+                px-[22px] pt-[20px] pb-[22px]
+                sm:px-[24px] sm:pt-[22px] sm:pb-[24px]
+                lg:w-[348px] lg:h-[330px]
+                lg:px-[28px] lg:pt-[24px] lg:pb-[24px]
+              "
+            >
+              <div className="flex items-start justify-between">
+                <div className="h-[30px] w-[118px] sm:h-[32px] sm:w-[124px]">
+                  <img
+                    src="/about/logo.svg"
+                    alt="Creators Hub"
+                    draggable={false}
+                    className="pointer-events-none h-full w-full select-none object-contain"
+                  />
+                </div>
+
+                <div className="h-[22px] w-[22px]">
                   <img
                     src="/about/target.svg"
                     alt="Target"
                     draggable={false}
-                    className="h-full w-full object-contain select-none pointer-events-none"
+                    className="pointer-events-none h-full w-full select-none object-contain"
                   />
-                </div>
-               </div>
-            </div>
-
-            {/* paragraph */}
-            <p
-              className="
-                absolute left-[18px] bottom-[22px]
-                max-w-[250px]
-                text-white
-                text-[12.5px]
-                leading-[1.35]
-                font-normal
-                text-left
-                max-[767px]:static max-[767px]:mt-[18px]
-              "
-            >
-              Creators Hub is a creative content agency, We specialize in content
-              creation for creators and brands, including video editing, short form
-              videos, social media content, and designs. Our focus is helping creators
-              grow.
-            </p>
-          </div>
-
-          {/* RIGHT WRAPPER */}
-          <div
-            className="
-              relative overflow-visible
-              flex-[1.5]
-              min-w-[420px]
-              h-[360px]
-              max-[1199px]:w-[min(680px,100%)]
-              max-[1199px]:min-w-0
-              max-[767px]:w-full
-              max-[767px]:h-auto max-[767px]:min-h-[320px]
-            "
-          >
-            {/* right card */}
-            <div
-              className="
-                relative w-full h-full
-                rounded-[14px]
-                border border-[#B7B7C9]
-                bg-white
-                overflow-hidden
-                pt-[18px] pr-[18px] pb-[18px] pl-[28px]
-                max-[767px]:pl-[18px]
-                max-[767px]:h-auto max-[767px]:min-h-[320px]
-              "
-            >
-              {/* header block CENTERED */}
-              <div className="relative z-[2] w-full text-center">
-                <div className="text-[#0A0F2C] text-[14px] font-bold">
-                  Based in Cairo, Egypt
-                </div>
-
-                <div className="mt-[6px] flex items-center justify-center gap-[8px]">
-                  <span
-                    className="h-[7px] w-[7px] rounded-full bg-[#22D3A6]"
-                    aria-hidden="true"
-                  />
-                  <span className="text-[10.5px] font-medium tracking-[0.08em] text-[#0A0F2C]/55">
-                    AVAILABLE WORLDWIDE
-                  </span>
                 </div>
               </div>
 
-              {/* globe */}
+              <p
+                className="
+                  absolute left-[22px] right-[22px] bottom-[24px]
+                  text-left text-[15px] font-normal leading-[1.55] text-white
+                  sm:left-[24px] sm:right-[24px]
+                  lg:left-[28px] lg:right-auto lg:bottom-[24px]
+                  lg:max-w-[255px] lg:text-[14px]
+                "
+              >
+                Creators Hub is a creative content agency, We specialize in
+                content creation for creators and brands, including video
+                editing, short form videos, social media content, and designs.
+                Our focus is helping creators grow.
+              </p>
+            </div>
+
+            {/* RIGHT CARD */}
+            <div
+              className="
+                relative w-full min-w-0 shrink-0
+                h-[417px]
+                lg:h-[330px] lg:flex-1 lg:shrink
+              "
+            >
+              <div
+                className="
+                  relative h-full w-full overflow-hidden
+                  rounded-[8.89px]
+                  border border-[#B8BCD3]
+                  bg-white
+                "
+              >
+                {/* Header */}
+                <div
+                  className="
+                    absolute left-0 right-0 top-0 z-[3]
+                    px-[16px] pt-[24px] text-center
+                    sm:px-[20px] sm:pt-[26px]
+                    lg:px-[20px] lg:pt-[20px]
+                  "
+                >
+                  <h3
+                    className="
+                      text-[18px] font-bold leading-[1.2] text-[#111640]
+                      lg:text-[16px]
+                    "
+                  >
+                    Based in Cairo, Egypt
+                  </h3>
+
+                  <div className="mt-[10px] flex items-center justify-center gap-[8px]">
+                    <span
+                      className="h-[8px] w-[8px] rounded-full bg-[#18E2AA]"
+                      aria-hidden="true"
+                    />
+                    <span
+                      className="
+                        text-[11px] font-medium leading-[1]
+                        tracking-[0.08em] text-[#111640]/70
+                      "
+                    >
+                      AVAILABLE WORLDWIDE
+                    </span>
+                  </div>
+                </div>
+
+                {/* Globe */}
+                <img
+                  src="/about/globe.svg"
+                  alt=""
+                  draggable={false}
+                  className="
+                    pointer-events-none select-none
+                    absolute left-1/2 bottom-[-6px] z-[1]
+                    w-[470px] max-w-none -translate-x-1/2
+                    sm:w-[560px]
+                    md:w-[620px]
+                    lg:bottom-[-14px] lg:w-[520px]
+                  "
+                />
+              </div>
+
+              {/* Rocket */}
               <img
-                src="/about/globe.svg"
+                src="/about/rocket-green.svg"
                 alt=""
                 draggable={false}
                 className="
                   pointer-events-none select-none
-                  absolute bottom-0 z-[1]
-                  left-[60px]
-                  w-[520px] h-auto
-                  max-[1199px]:left-[40px]
-                  max-[767px]:relative max-[767px]:left-0
-                  max-[767px]:mt-[14px]
-                  max-[767px]:mx-auto
-                  max-[767px]:w-[min(520px,100%)]
+                  absolute z-[5]
+                  right-[-2px] bottom-[-8px]
+                  h-[72px] w-[72px]
+                  sm:right-[-6px] sm:bottom-[-10px]
+                  sm:h-[80px] sm:w-[80px]
+                  lg:right-[-20px] lg:bottom-[-18px]
+                  lg:h-[86px] lg:w-[86px]
                 "
               />
             </div>
-
-            {/* rocket sticker */}
-            <img
-              src="/about/rocket-green.svg"
-              alt=""
-              draggable={false}
-              className="
-                pointer-events-none select-none
-                absolute z-[5]
-                right-[-18px] bottom-[-8px]
-                w-[86px] h-[86px]
-                max-[767px]:right-[-10px] max-[767px]:bottom-[-6px]
-                max-[767px]:w-[74px] max-[767px]:h-[74px]
-              "
-            />
           </div>
         </div>
       </div>

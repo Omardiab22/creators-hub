@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useAnimationFrame, useMotionValue } from "framer-motion";
 
 type TestimonialCard = {
   id: string;
@@ -17,9 +17,12 @@ const SECTION_BG = "/testimonials/background.png";
 const STAR_ASSET = "/testimonials/star.svg";
 const MR_BEAST_LOGO = "/testimonials/mr-beast-logo.svg";
 
-function cardSpec(idx: number) {
-  const yBase = [26, 74, 40, 88, 32, 70, 44, 84][idx % 8];
-  return { yBase };
+function cardFloatSpec(idx: number) {
+  return {
+    baseY: [18, 58, 28, 70, 20, 56, 30, 66][idx % 8],
+    duration: [4.8, 5.2, 4.6, 5.4][idx % 4],
+    delay: [0, 0.3, 0.6, 0.9][idx % 4],
+  };
 }
 
 export default function Testimonials() {
@@ -61,16 +64,13 @@ export default function Testimonials() {
   const firstSetRef = useRef<HTMLDivElement | null>(null);
 
   const x = useMotionValue(0);
-  const xSpring = useSpring(x, {
-    stiffness: 90,
-    damping: 24,
-    mass: 0.95,
-  });
-
   const [setWidth, setSetWidth] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
 
-  const SPEED = 58;
+  /**
+   * سرعة الماركي:
+   * زودتها شوية عشان الحركة متبقاش بطيئة
+   */
+  const SPEED = 92; // px/sec
 
   useEffect(() => {
     const measure = () => {
@@ -92,42 +92,22 @@ export default function Testimonials() {
     };
   }, []);
 
-  useEffect(() => {
+  useAnimationFrame((_, delta) => {
     if (!setWidth) return;
 
-    let raf = 0;
-    let last = performance.now();
+    const moveBy = (SPEED * delta) / 1000;
+    const current = x.get();
+    let next = current - moveBy;
 
-    const loop = (now: number) => {
-      raf = requestAnimationFrame(loop);
-      const dt = (now - last) / 1000;
-      last = now;
+    /**
+     * Loop لا نهائي بدون jump واضح
+     */
+    if (Math.abs(next) >= setWidth) {
+      next += setWidth;
+    }
 
-      if (isDragging) return;
-
-      let next = x.get() - SPEED * dt;
-
-      if (next <= -setWidth) {
-        next += setWidth;
-      }
-
-      x.set(next);
-    };
-
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [setWidth, isDragging, x]);
-
-  const normalizeX = () => {
-    if (!setWidth) return;
-
-    let current = x.get();
-
-    while (current > 0) current -= setWidth;
-    while (current <= -setWidth) current += setWidth;
-
-    x.set(current);
-  };
+    x.set(next);
+  });
 
   return (
     <section
@@ -193,21 +173,15 @@ export default function Testimonials() {
           className="relative w-full overflow-hidden min-h-[320px] sm:min-h-[390px] lg:min-h-[520px]"
         >
           <motion.div
-            className="flex w-max will-change-transform pt-6 pb-16 sm:pt-8 sm:pb-20 lg:pt-10 lg:pb-24"
-            style={{ x: xSpring }}
-            drag="x"
-            dragConstraints={{ left: -Infinity, right: Infinity }}
-            dragElastic={0.03}
-            dragMomentum
-            onDragStart={() => setIsDragging(true)}
-            onDragEnd={() => {
-              setIsDragging(false);
-              normalizeX();
+            className="flex w-max will-change-transform"
+            style={{
+              x,
+              willChange: "transform",
             }}
           >
             <div
               ref={firstSetRef}
-              className="flex items-start gap-4 px-3 sm:gap-5 sm:px-4 lg:gap-7 lg:px-5"
+              className="flex items-start gap-4 px-3 pt-6 pb-16 sm:gap-5 sm:px-4 sm:pt-8 sm:pb-20 lg:gap-7 lg:px-5 lg:pt-10 lg:pb-24"
             >
               {items.map((card, idx) => (
                 <TestimonialCardItem
@@ -218,7 +192,7 @@ export default function Testimonials() {
               ))}
             </div>
 
-            <div className="flex items-start gap-4 px-3 sm:gap-5 sm:px-4 lg:gap-7 lg:px-5">
+            <div className="flex items-start gap-4 px-3 pt-6 pb-16 sm:gap-5 sm:px-4 sm:pt-8 sm:pb-20 lg:gap-7 lg:px-5 lg:pt-10 lg:pb-24">
               {items.map((card, idx) => (
                 <TestimonialCardItem
                   key={`${card.id}-set2`}
@@ -228,7 +202,7 @@ export default function Testimonials() {
               ))}
             </div>
 
-            <div className="flex items-start gap-4 px-3 sm:gap-5 sm:px-4 lg:gap-7 lg:px-5">
+            <div className="flex items-start gap-4 px-3 pt-6 pb-16 sm:gap-5 sm:px-4 sm:pt-8 sm:pb-20 lg:gap-7 lg:px-5 lg:pt-10 lg:pb-24">
               {items.map((card, idx) => (
                 <TestimonialCardItem
                   key={`${card.id}-set3`}
@@ -251,11 +225,7 @@ function TestimonialCardItem({
   card: TestimonialCard;
   idx: number;
 }) {
-  const spec = cardSpec(idx);
-
-  const travelUp = 10;
-  const travelDown = 8;
-  const phase = (idx % 4) * 0.35;
+  const floatSpec = cardFloatSpec(idx);
 
   return (
     <motion.article
@@ -268,26 +238,26 @@ function TestimonialCardItem({
       style={{
         background: `linear-gradient(135deg, ${CARD_BLUE} 0%, ${CARD_BLUE} 76%, rgba(159,242,232,0.95) 100%)`,
         boxShadow: "0 18px 42px rgba(0,0,0,0.08)",
+        willChange: "transform",
+        transform: "translateZ(0)",
+        backfaceVisibility: "hidden",
       }}
       initial={false}
       animate={{
         y: [
-          spec.yBase,
-          spec.yBase - travelUp,
-          spec.yBase,
-          spec.yBase + travelDown,
-          spec.yBase,
+          floatSpec.baseY,
+          floatSpec.baseY - 12,
+          floatSpec.baseY,
+          floatSpec.baseY + 8,
+          floatSpec.baseY,
         ],
       }}
       transition={{
-        duration: 5.6,
+        duration: floatSpec.duration,
         repeat: Infinity,
+        repeatType: "loop",
         ease: "easeInOut",
-        delay: phase,
-      }}
-      whileHover={{
-        y: spec.yBase - 4,
-        transition: { duration: 0.22, ease: "easeOut" },
+        delay: floatSpec.delay,
       }}
     >
       <div
